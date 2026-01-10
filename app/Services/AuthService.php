@@ -3,42 +3,68 @@
 namespace App\Services;
 
 use App\Models\User;
+use App\Enums\UserGenderEnum;
+use App\Enums\UserStatusEnum;
+use App\Data\Auth\LoginUserData;
+use App\Data\Auth\CreateUserData;
+use Illuminate\Auth\Events\Login;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
-use Spatie\Permission\Models\Role;
 
 class AuthService
 {
 
-    public function registerUser(array $data): array
+    public function registerUser(CreateUserData $data): array
     {
-        $user = User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
-        ]);
+        try {
+            DB::beginTransaction();
+            $user = User::create([
+                'email' => $data->email,
+                'password' => Hash::make($data->password),
+                'avatar' => $data->avatar,
+                'firstname' => $data->firstname,
+                'lastname' => $data->lastname,
+                'gender' => $data->gender,
+                'date_of_birth' => $data->date_of_birth,
+                'phone' => $data->phone,
+                'status' => UserStatusEnum::ACTIVE->value,
+            ]);
 
-        // Assign default role
-        $user->assignRole('user'); // Ensure 'user' role exists or create it in seeder
+            $user->assignRole('user');
 
-        $token = $user->createToken('auth_token')->plainTextToken;
-
-        return [
-            'user' => $user,
-            'token' => $token,
-        ];
+            $token = $user->createToken('auth_token')->plainTextToken;
+            DB::commit();
+            return [
+                'user' => $user,
+                'token' => $token,
+            ];
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            DB::rollBack();
+            throw $e;
+        }
     }
 
 
-    public function loginUser(array $credentials): array
+    public function loginUser(LoginUserData $credentials): array
     {
-        $user = User::where('email', $credentials['email'])->first();
+        $user = User::where('email', $credentials->login)->first();
 
-        if (! $user || ! Hash::check($credentials['password'], $user->password)) {
+        $field = filter_var($credentials->login, FILTER_VALIDATE_EMAIL)
+            ? 'email'
+            : 'phone';
+
+        if (!Auth::attempt([
+            $field => $credentials->login,
+            'password' => $credentials->password,
+        ])) {
             throw ValidationException::withMessages([
-                'email' => [__('auth.failed')],
+                'login' => ['Identifiants invalides'],
             ]);
         }
+
+        $user = Auth::user();
 
         $token = $user->createToken('auth_token')->plainTextToken;
 

@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\Auth\LoginRequest;
-use App\Http\Requests\Auth\RegisterRequest;
-use App\Http\Resources\UserResource;
-use App\Services\AuthService;
 use Illuminate\Http\Request;
+use App\Services\AuthService;
+use App\Data\Auth\LoginUserData;
+use App\Data\Auth\CreateUserData;
 use Illuminate\Http\JsonResponse;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\UserResource;
+use App\Http\Resources\AutUserRessource;
+use App\Http\Requests\Auth\LoginUserRequest;
+use App\Http\Requests\Auth\RegisterUserRequest;
 
 class AuthController extends Controller
 {
@@ -19,57 +22,39 @@ class AuthController extends Controller
         $this->authService = $authService;
     }
 
-    /**
-     * Register a new user
-     */
-    public function register(Request $request): JsonResponse
-    {
-        // Ideally use a FormRequest for validation
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
-        ]);
 
-        $result = $this->authService->registerUser($request->all());
+    public function register(RegisterUserRequest $request): JsonResponse
+    {
+
+        $data = $request->validated();
+
+        $result = $this->authService->registerUser(CreateUserData::fromArray($data));
 
         return response()->json([
-            'message' => 'User registered successfully',
             'user' => new UserResource($result['user']),
             'token' => $result['token'],
         ], 201);
     }
 
-    /**
-     * Login user
-     */
-    public function login(Request $request): JsonResponse
-    {
-        $request->validate([
-            'email' => 'required|string|email',
-            'password' => 'required|string',
-        ]);
 
-        $result = $this->authService->loginUser($request->only(['email', 'password']));
+    public function login(LoginUserRequest $request): JsonResponse
+    {
+        $data = $request->validated();
+        $result = $this->authService->loginUser(LoginUserData::fromArray($data));
 
         return response()->json([
-            'message' => 'Login successful',
             'user' => new UserResource($result['user']),
             'token' => $result['token'],
         ]);
     }
 
-    /**
-     * Get authenticated user
-     */
+
     public function me(Request $request): UserResource
     {
         return new UserResource($request->user());
     }
 
-    /**
-     * Logout user
-     */
+
     public function logout(Request $request): JsonResponse
     {
         $request->user()->currentAccessToken()->delete();

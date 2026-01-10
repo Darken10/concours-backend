@@ -1,0 +1,24 @@
+<?php
+
+namespace App\Http\Resources;
+
+use App\Models\User;
+use Illuminate\Http\Request;
+use App\Http\Resources\UserResource;
+use Illuminate\Http\Resources\Json\JsonResource;
+
+class AutUserRessource extends JsonResource
+{
+    /**
+     * Transform the resource into an array.
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray(Request $request): array
+    {
+        return [
+            ...(UserResource::make($this->resource))->toArray($request),
+            'token' => $this->token,
+        ];
+    }
+}

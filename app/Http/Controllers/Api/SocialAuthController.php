@@ -2,25 +2,30 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
-use App\Services\AuthService;
+use App\Models\User;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Services\AuthService;
 use Illuminate\Http\JsonResponse;
-use Laravel\Socialite\Facades\Socialite;
+use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
+use Illuminate\Support\Facades\Hash;
+use Laravel\Socialite\Facades\Socialite;
+use Illuminate\Database\Eloquent\Attributes\UseResource;
 
 class SocialAuthController extends Controller
 {
     protected AuthService $authService;
+    protected array $providers = ['google', 'facebook', 'github', 'twitter'];
 
     public function __construct(AuthService $authService)
     {
         $this->authService = $authService;
     }
 
-    /**
-     * Handle social login via access token from mobile app
-     */
+
+
+
     public function handleProvider(Request $request, string $provider): JsonResponse
     {
         $request->validate([
@@ -42,4 +47,48 @@ class SocialAuthController extends Controller
             'token' => $result['token'],
         ]);
     }
+
+    public function redirect(string $provider)
+    {
+        abort_unless(in_array($provider, $this->providers), 404);
+
+        return Socialite::driver($provider)->stateless()->redirect();
+    }
+
+
+  public function callback(string $provider)
+    {
+        abort_unless(in_array($provider, $this->providers), 404);
+
+        $socialUser = Socialite::driver($provider)->stateless()->user();
+
+        $user = User::where('provider', $provider)
+            ->where('provider_id', $socialUser->getId())
+            ->first();
+
+        if (!$user) {
+            $user = User::create([
+                'email' => $socialUser->getEmail(),
+                'password' => Hash::make(Str::random(32)),
+
+                'provider' => $provider,
+                'provider_id' => $socialUser->getId(),
+                'avatar' => $socialUser->getAvatar(),
+
+                'first_name' => $socialUser->getName()
+                    ? explode(' ', $socialUser->getName())[0]
+                    : null,
+
+                'last_name' => $socialUser->getName()
+                    ? explode(' ', $socialUser->getName(), 2)[1] ?? null
+                    : null,
+            ]);
+        }
+
+        return response()->json([
+            'user' => new UserResource($user),
+            'token' => $user->createToken('auth-token')->plainTextToken,
+        ]);
+    }
+
 }
