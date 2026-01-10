@@ -23,9 +23,6 @@ class SocialAuthController extends Controller
         $this->authService = $authService;
     }
 
-
-
-
     public function handleProvider(Request $request, string $provider): JsonResponse
     {
         $request->validate([
@@ -56,7 +53,7 @@ class SocialAuthController extends Controller
     }
 
 
-  public function callback(string $provider)
+    public function callback(string $provider)
     {
         abort_unless(in_array($provider, $this->providers), 404);
 
@@ -90,5 +87,4 @@ class SocialAuthController extends Controller
             'token' => $user->createToken('auth-token')->plainTextToken,
         ]);
     }
-
 }

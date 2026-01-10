@@ -11,8 +11,8 @@ Route::prefix('auth')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/social/{provider}', [SocialAuthController::class, 'handleProvider']);
 
-    Route::get('{provider}/redirect', [SocialAuthController::class, 'redirect']);
-    Route::get('{provider}/callback', [SocialAuthController::class, 'callback']);
+    Route::get('/{provider}/redirect', [SocialAuthController::class, 'redirect']);
+    Route::get('/{provider}/callback', [SocialAuthController::class, 'callback']);
 
 
     Route::middleware('auth:sanctum')->group(function () {
