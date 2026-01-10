@@ -45,15 +45,21 @@ class SocialAuthController extends Controller
         ]);
     }
 
-    public function redirect(string $provider)
+    public function redirect(Request $request, string $provider)
     {
         abort_unless(in_array($provider, $this->providers), 404);
 
-        return Socialite::driver($provider)->stateless()->redirect();
+        $response = Socialite::driver($provider)->stateless()->redirect();
+
+        if ($request->expectsJson()) {
+            return response()->json(['url' => $response->getTargetUrl()]);
+        }
+
+        return $response;
     }
 
 
-    public function callback(string $provider)
+    public function callback(Request $request, string $provider)
     {
         abort_unless(in_array($provider, $this->providers), 404);
 
