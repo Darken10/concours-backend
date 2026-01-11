@@ -30,8 +30,14 @@ class CreateNewUser implements CreatesNewUsers
             'password' => $this->passwordRules(),
         ])->validate();
 
+        // Extract firstname and lastname from name
+        $nameParts = explode(' ', trim($input['name']), 2);
+        $firstname = $nameParts[0];
+        $lastname = $nameParts[1] ?? '';
+
         return User::create([
-            'name' => $input['name'],
+            'firstname' => $firstname,
+            'lastname' => $lastname,
             'email' => $input['email'],
             'password' => $input['password'],
         ]);

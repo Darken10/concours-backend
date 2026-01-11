@@ -4,24 +4,25 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
-use Illuminate\Support\Str;
 use App\Enums\UserGenderEnum;
+use App\Enums\UserRoleEnum;
 use App\Enums\UserStatusEnum;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Str;
+use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
-use Illuminate\Notifications\Notifiable;
-use Laravel\Fortify\TwoFactorAuthenticatable;
-use Illuminate\Database\Eloquent\Concerns\HasUlids;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, TwoFactorAuthenticatable, HasApiTokens, HasRoles,HasUlids;
+    use HasApiTokens, HasFactory, HasRoles, HasUuids, Notifiable,TwoFactorAuthenticatable;
 
     protected $primaryKey = 'id';
+
     protected $keyType = 'string';
 
     /**
@@ -90,5 +91,40 @@ class User extends Authenticatable
     public function getNameAttribute(): string
     {
         return "{$this->firstname} {$this->lastname}";
+    }
+
+    public function isAdmin()
+    {
+        return $this->hasRole(UserRoleEnum::ADMIN->value);
+    }
+
+    public function isSuperAdmin()
+    {
+        return $this->hasRole(UserRoleEnum::SUPER_ADMIN->value);
+    }
+
+    public function isUser()
+    {
+        return $this->hasRole(UserRoleEnum::USER->value);
+    }
+
+    public function isAgent()
+    {
+        return $this->hasRole(UserRoleEnum::AGENT->value);
+    }
+
+    public function posts()
+    {
+        return $this->hasMany(\App\Models\Post\Post::class);
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(\App\Models\Post\Comment::class);
+    }
+
+    public function likes()
+    {
+        return $this->hasMany(\App\Models\Post\Like::class);
     }
 }

@@ -4,9 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
-use Spatie\Permission\Models\Role;
 
 class AuthTest extends TestCase
 {
@@ -15,21 +13,23 @@ class AuthTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        // Create user role because AuthService assigns it
-        Role::create(['name' => 'user']);
+        // Seed roles and permissions before each test
+        $this->seed(\Database\Seeders\RolesAndPermissionsSeeder::class);
     }
 
     public function test_user_can_register()
     {
         $response = $this->postJson('/api/auth/register', [
-            'name' => 'Test User',
+            'firstname' => 'Test',
+            'lastname' => 'User',
             'email' => 'test@example.com',
             'password' => 'password',
             'password_confirmation' => 'password',
+            'gender' => 'male',
         ]);
 
         $response->assertStatus(201)
-            ->assertJsonStructure(['user', 'token', 'message']);
+            ->assertJsonStructure(['user', 'token']);
 
         $this->assertDatabaseHas('users', ['email' => 'test@example.com']);
     }
@@ -47,15 +47,16 @@ class AuthTest extends TestCase
         ]);
 
         $response->assertStatus(200)
-            ->assertJsonStructure(['user', 'token', 'message']);
+            ->assertJsonStructure(['user', 'token']);
     }
 
     public function test_user_can_logout()
     {
         $user = User::factory()->create();
+        $user->assignRole('user');
         $token = $user->createToken('auth_token')->plainTextToken;
 
-        $response = $this->withHeaders(['Authorization' => 'Bearer ' . $token])
+        $response = $this->withHeaders(['Authorization' => 'Bearer '.$token])
             ->postJson('/api/auth/logout');
 
         $response->assertStatus(200)
@@ -65,15 +66,13 @@ class AuthTest extends TestCase
     public function test_user_can_get_me()
     {
         $user = User::factory()->create();
-        // assign role if needed for resource
-        // $user->assignRole('user');
-
+        $user->assignRole('user');
         $token = $user->createToken('auth_token')->plainTextToken;
 
-        $response = $this->withHeaders(['Authorization' => 'Bearer ' . $token])
+        $response = $this->withHeaders(['Authorization' => 'Bearer '.$token])
             ->getJson('/api/auth/me');
 
         $response->assertStatus(200)
-            ->assertJsonStructure(['data' => ['id', 'name', 'email']]);
+            ->assertJsonStructure(['id', 'firstname', 'lastname', 'email']);
     }
 }
