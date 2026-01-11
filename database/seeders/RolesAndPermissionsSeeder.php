@@ -2,8 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
+use App\Enums\UserRoleEnum;
 use App\Models\Role;
+use Illuminate\Database\Seeder;
 use Spatie\Permission\PermissionRegistrar;
 
 class RolesAndPermissionsSeeder extends Seeder
@@ -17,9 +18,10 @@ class RolesAndPermissionsSeeder extends Seeder
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
         // create roles
-        $userRole = Role::create(['name' => 'user']);
-        $adminRole = Role::create(['name' => 'admin']);
-        $managerRole = Role::create(['name' => 'manager']);
+        $userRole = Role::create(['name' => UserRoleEnum::USER->value]);
+        $adminRole = Role::create(['name' => UserRoleEnum::ADMIN->value]);
+        $superAdminRole = Role::create(['name' => UserRoleEnum::SUPER_ADMIN->value]);
+        $agentRole = Role::create(['name' => UserRoleEnum::AGENT->value]);
 
         // create permissions (example)
         // Permission::create(['name' => 'edit articles']);

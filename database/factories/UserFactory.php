@@ -25,7 +25,8 @@ class UserFactory extends Factory
     {
         return [
             'id' => (string) Str::uuid(),
-            'name' => fake()->name(),
+            'firstname' => fake()->firstName(),
+            'lastname' => fake()->lastName(),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
@@ -33,6 +34,8 @@ class UserFactory extends Factory
             'two_factor_secret' => Str::random(10),
             'two_factor_recovery_codes' => Str::random(10),
             'two_factor_confirmed_at' => now(),
+            'status' => 'active',
+            'gender' => fake()->randomElement(['male', 'female']),
         ];
     }
 
