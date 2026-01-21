@@ -43,10 +43,38 @@ class PostController extends Controller
 
     public function store(StorePostRequest $request): JsonResponse
     {
-        $data = CreatePostData::from($request->validated());
-        $post = $this->postService->createPost(auth()->user(), $data);
+        try {
+            $this->authorize('create', Post::class);
 
-        return response()->json(new PostResource($post), 201);
+            \Log::info('Step 1: Authorized');
+            \Log::info('Request data:', $request->all());
+            \Log::info('Validated data:', $request->validated());
+            
+            // Préparer les données pour CreatePostData
+            $validatedData = $request->validated();
+            \Log::info('Step 2: Data validated', ['data' => $validatedData]);
+
+            $data = CreatePostData::from($validatedData);
+            \Log::info('Step 3: CreatePostData created');
+
+            $post = $this->postService->createPost(auth()->user(), $data);
+            \Log::info('Step 4: Post created');
+
+            return response()->json(new PostResource($post), 201);
+        } catch (\Exception $e) {
+            \Log::error('Error creating post: ' . $e->getMessage(), [
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return response()->json([
+                'message' => 'Erreur lors de la création du post',
+                'error' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ], 500);
+        }
     }
 
     public function show(Post $post): JsonResponse
