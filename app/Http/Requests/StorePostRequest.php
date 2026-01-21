@@ -25,9 +25,10 @@ class StorePostRequest extends FormRequest
             'title' => ['required', 'string', 'min:3', 'max:255'],
             'content' => ['required', 'string', 'min:10', 'max:10000'],
             'images' => ['nullable', 'array'],
-            'images.*' => ['nullable', 'file', 'mimes:jpeg,png,gif,webp,jpg', 'max:5120'],
+            // Temporairement sans validation 'file' pour debug
+            'images.*' => ['nullable'],
             'attachments' => ['nullable', 'array'],
-            'attachments.*' => ['nullable', 'file', 'mimes:pdf,doc,docx', 'max:10240'],
+            'attachments.*' => ['nullable'],
         ];
     }
 

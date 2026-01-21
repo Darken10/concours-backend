@@ -47,10 +47,16 @@ class PostController extends Controller
             $this->authorize('create', Post::class);
 
             \Log::info('Step 1: Authorized');
-            \Log::info('Request data:', $request->all());
-            \Log::info('Validated data:', $request->validated());
+            \Log::info('Request all:', $request->all());
+            \Log::info('Request files:', ['files' => $request->allFiles()]);
+            \Log::info('Request hasFile images:', ['hasFile' => $request->hasFile('images')]);
             
-            // Préparer les données pour CreatePostData
+            // Vérifier si images est un tableau
+            if ($request->has('images')) {
+                \Log::info('Images type:', ['type' => gettype($request->input('images'))]);
+                \Log::info('Images content:', $request->input('images'));
+            }
+            
             $validatedData = $request->validated();
             \Log::info('Step 2: Data validated', ['data' => $validatedData]);
 
