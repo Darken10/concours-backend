@@ -24,16 +24,9 @@ class PostService
 
             if ($data->images) {
                 foreach ($data->images as $image) {
-                    $post->addMedia($image)->toMediaCollection('images');
+                    $post->addMedia($image)->toMediaCollection('images', 'public');
                 }
             }
-
-            if ($data->attachments) {
-                foreach ($data->attachments as $attachment) {
-                    $post->addMedia($attachment)->toMediaCollection('attachments');
-                }
-            }
-
             DB::commit();
 
             return $post->load('user', 'comments', 'likes');
@@ -56,14 +49,14 @@ class PostService
             if ($data->images) {
                 $post->clearMediaCollection('images');
                 foreach ($data->images as $image) {
-                    $post->addMedia($image)->toMediaCollection('images');
+                    $post->addMedia($image)->toMediaCollection('images', 'public');
                 }
             }
 
             if ($data->attachments) {
                 $post->clearMediaCollection('attachments');
                 foreach ($data->attachments as $attachment) {
-                    $post->addMedia($attachment)->toMediaCollection('attachments');
+                    $post->addMedia($attachment)->toMediaCollection('attachments', 'public');
                 }
             }
 

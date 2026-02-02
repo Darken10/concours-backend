@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
+use App\Http\Resources\UserCreatorResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class PostResource extends JsonResource
@@ -20,7 +21,7 @@ class PostResource extends JsonResource
             'id' => $this->id,
             'title' => $this->title,
             'content' => $this->content,
-            'author' => new UserResource($this->whenLoaded('user')),
+            'author' => new UserCreatorResource($this->whenLoaded('user')),
             'likes_count' => $this->likes_count ?? 0,
             'comments_count' => $this->comments_count ?? 0,
             'shares_count' => $this->shares_count ?? 0,
@@ -29,14 +30,8 @@ class PostResource extends JsonResource
                 fn () => $this->likedBy(auth()->user())
             ),
             'images' => $this->getMedia('images')->map(fn ($media) => [
-                'id' => $media->id,
-                'url' => $media->getUrl(),
-                'name' => $media->name,
-            ]),
-            'attachments' => $this->getMedia('attachments')->map(fn ($media) => [
-                'id' => $media->id,
-                'url' => $media->getUrl(),
-                'name' => $media->name,
+                'url' => $media->getFullUrl(),
+                'mime_type' => $media->mime_type,
             ]),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

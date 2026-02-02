@@ -45,26 +45,13 @@ class PostController extends Controller
     {
         try {
             $this->authorize('create', Post::class);
-
-            \Log::info('Step 1: Authorized');
-            \Log::info('Request all:', $request->all());
-            \Log::info('Request files:', ['files' => $request->allFiles()]);
-            \Log::info('Request hasFile images:', ['hasFile' => $request->hasFile('images')]);
-            
-            // Vérifier si images est un tableau
-            if ($request->has('images')) {
-                \Log::info('Images type:', ['type' => gettype($request->input('images'))]);
-                \Log::info('Images content:', $request->input('images'));
-            }
             
             $validatedData = $request->validated();
-            \Log::info('Step 2: Data validated', ['data' => $validatedData]);
 
             $data = CreatePostData::from($validatedData);
-            \Log::info('Step 3: CreatePostData created');
+            
 
             $post = $this->postService->createPost(auth()->user(), $data);
-            \Log::info('Step 4: Post created');
 
             return response()->json(new PostResource($post), 201);
         } catch (\Exception $e) {
