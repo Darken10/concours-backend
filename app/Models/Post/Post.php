@@ -29,11 +29,7 @@ class Post extends Model implements HasMedia
         'updated_at' => 'datetime',
     ];
 
-    protected $appends = [
-        'likes_count',
-        'comments_count',
-        'shares_count',
-    ];
+    protected $appends = [];
 
     public function user()
     {
@@ -64,18 +60,4 @@ class Post extends Model implements HasMedia
             ->acceptsMimeTypes(['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document']);
     }
 
-    public function getLikesCountAttribute(): int
-    {
-        return $this->likes()->count();
-    }
-
-    public function getCommentsCountAttribute(): int
-    {
-        return $this->comments()->count();
-    }
-
-    public function getSharesCountAttribute(): int
-    {
-        return 0;
-    }
 }

@@ -28,7 +28,8 @@ class PostPolicy
      */
     public function create(User $user): bool
     {
-        return $user->isAdmin() || $user->isSuperAdmin() || $user->isAgent() || $user->isUser();
+        //return $user->isAdmin() || $user->isSuperAdmin() || $user->isAgent() || $user->isUser();
+        return true;
     }
 
     /**

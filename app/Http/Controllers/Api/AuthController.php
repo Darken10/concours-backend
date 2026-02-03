@@ -54,7 +54,12 @@ class AuthController extends Controller
 
     public function logout(Request $request): JsonResponse
     {
-        $request->user()->currentAccessToken()->delete();
+        $token = $request->user()->currentAccessToken();
+
+        // Check if it's not a transient token (used in testing)
+        if ($token && method_exists($token, 'delete')) {
+            $token->delete();
+        }
 
         return response()->json(['message' => 'Logged out successfully']);
     }

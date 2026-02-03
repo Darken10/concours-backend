@@ -24,19 +24,12 @@ class PostService
 
             if ($data->images) {
                 foreach ($data->images as $image) {
-                    $post->addMedia($image)->toMediaCollection('images');
+                    $post->addMedia($image)->toMediaCollection('images', 'public');
                 }
             }
-
-            if ($data->attachments) {
-                foreach ($data->attachments as $attachment) {
-                    $post->addMedia($attachment)->toMediaCollection('attachments');
-                }
-            }
-
             DB::commit();
 
-            return $post->load('user', 'comments', 'likes');
+            return $post->load('user')->loadCount('comments', 'likes');
         } catch (\Exception $e) {
             DB::rollBack();
             throw $e;
@@ -56,20 +49,20 @@ class PostService
             if ($data->images) {
                 $post->clearMediaCollection('images');
                 foreach ($data->images as $image) {
-                    $post->addMedia($image)->toMediaCollection('images');
+                    $post->addMedia($image)->toMediaCollection('images', 'public');
                 }
             }
 
             if ($data->attachments) {
                 $post->clearMediaCollection('attachments');
                 foreach ($data->attachments as $attachment) {
-                    $post->addMedia($attachment)->toMediaCollection('attachments');
+                    $post->addMedia($attachment)->toMediaCollection('attachments', 'public');
                 }
             }
 
             DB::commit();
 
-            return $post->fresh()->load('user', 'comments', 'likes');
+            return $post->fresh()->load('user')->loadCount('comments', 'likes');
         } catch (\Exception $e) {
             DB::rollBack();
             throw $e;
@@ -96,7 +89,8 @@ class PostService
 
     public function getPosts($perPage = 15)
     {
-        return Post::with('user', 'comments', 'likes')
+        return Post::with('user')
+            ->withCount('comments', 'likes')
             ->latest()
             ->paginate($perPage);
     }
@@ -104,7 +98,8 @@ class PostService
     public function getPostsByUser(User $user, $perPage = 15)
     {
         return Post::where('user_id', $user->id)
-            ->with('user', 'comments', 'likes')
+            ->with('user')
+            ->withCount('comments', 'likes')
             ->latest()
             ->paginate($perPage);
     }

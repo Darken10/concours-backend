@@ -11,7 +11,7 @@ class StorePostRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return auth()->check() && (auth()->user()->isAdmin() || auth()->user()->isSuperAdmin() || auth()->user()->isAgent());
+        return auth()->check();
     }
 
     /**
@@ -25,9 +25,9 @@ class StorePostRequest extends FormRequest
             'title' => ['required', 'string', 'min:3', 'max:255'],
             'content' => ['required', 'string', 'min:10', 'max:10000'],
             'images' => ['nullable', 'array'],
-            'images.*' => ['file', 'mimes:jpeg,png,gif,webp', 'max:5120'],
+            'images.*' => ['nullable', 'file', 'mimes:jpeg,png,gif,webp', 'max:5120'],
             'attachments' => ['nullable', 'array'],
-            'attachments.*' => ['file', 'mimes:pdf,doc,docx', 'max:10240'],
+            'attachments.*' => ['nullable', 'file', 'mimes:pdf,doc,docx', 'max:10240'],
         ];
     }
 

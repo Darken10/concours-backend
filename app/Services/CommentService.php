@@ -24,13 +24,6 @@ class CommentService
                 'content' => $data->content,
             ]);
 
-            // Incrémenter le compteur de commentaires
-            if ($data->parent_id) {
-                Comment::find($data->parent_id)->increment('replies_count');
-            } else {
-                $post->increment('comments_count');
-            }
-
             if ($data->attachments) {
                 foreach ($data->attachments as $attachment) {
                     $comment->addMedia($attachment)->toMediaCollection('attachments');
@@ -39,7 +32,7 @@ class CommentService
 
             DB::commit();
 
-            return $comment->load('user', 'likes');
+            return $comment->load('user')->loadCount('likes', 'replies');
         } catch (\Exception $e) {
             DB::rollBack();
             throw $e;
@@ -64,7 +57,7 @@ class CommentService
 
             DB::commit();
 
-            return $comment->fresh()->load('user', 'likes');
+            return $comment->fresh()->load('user')->loadCount('likes', 'replies');
         } catch (\Exception $e) {
             DB::rollBack();
             throw $e;
@@ -75,13 +68,6 @@ class CommentService
     {
         try {
             DB::beginTransaction();
-
-            // Décrémenter les compteurs
-            if ($comment->parent_id) {
-                Comment::find($comment->parent_id)->decrement('replies_count');
-            } else {
-                $comment->post->decrement('comments_count');
-            }
 
             // Supprimer les réponses associées
             if ($comment->replies()->exists()) {
@@ -106,7 +92,10 @@ class CommentService
     {
         return $post->comments()
             ->whereNull('parent_id')
-            ->with('user', 'likes', 'replies.user', 'replies.likes')
+            ->with(['user', 'replies' => function ($query) {
+                $query->with('user')->withCount('likes', 'replies');
+            }])
+            ->withCount('likes', 'replies')
             ->latest()
             ->paginate($perPage);
     }
@@ -114,7 +103,8 @@ class CommentService
     public function getCommentReplies(Comment $comment, $perPage = 15)
     {
         return $comment->replies()
-            ->with('user', 'likes')
+            ->with('user')
+            ->withCount('likes', 'replies')
             ->latest()
             ->paginate($perPage);
     }

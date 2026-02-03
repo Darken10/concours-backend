@@ -15,7 +15,7 @@ class OrganizationService
 {
     public function createOrganization(CreateOrganizationData $data): Organization
     {
-        return DB::transaction(function () use ($data, $creator) {
+        return DB::transaction(function () use ($data) {
             $org = Organization::create([
                 'name' => $data->name,
                 'description' => $data->description,
@@ -57,8 +57,8 @@ class OrganizationService
                 $user = User::create([
                     'email' => $payload['email'],
                     'password' => Hash::make(Str::random(16)),
-                    'first_name' => $payload['first_name'],
-                    'last_name' => $payload['last_name'],
+                    'firstname' => $payload['firstname'],
+                    'lastname' => $payload['lastname'],
                     'phone' => $payload['phone'] ?? null,
                     'avatar' => $payload['avatar'] ?? null,
                     'organization_id' => $organization->id,
@@ -91,8 +91,8 @@ class OrganizationService
             $user = User::create([
                 'email' => $data->email,
                 'password' => Hash::make(Str::random(16)),
-                'first_name' => $data->first_name,
-                'last_name' => $data->last_name,
+                'firstname' => $data->firstname,
+                'lastname' => $data->lastname,
                 'phone' => $data->phone,
                 'avatar' => $data->avatar,
                 'organization_id' => $organization->id,
