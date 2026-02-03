@@ -50,7 +50,7 @@ class AuthService
     public function loginUser(LoginUserData $credentials): array
     {
         $user = User::where('email', $credentials->login)->first();
-        
+
 
         $field = filter_var($credentials->login, FILTER_VALIDATE_EMAIL)
             ? 'email'
@@ -95,8 +95,11 @@ class AuthService
                 ]);
             } else {
                 // Create new user
+                $nameParts = explode(' ', $socialUser->getName() ?? 'Unknown User', 2);
+
                 $user = User::create([
-                    'name' => $socialUser->getName(),
+                    'firstname' => $nameParts[0] ?? 'Unknown',
+                    'lastname' => $nameParts[1] ?? 'User',
                     'email' => $socialUser->getEmail(),
                     'password' => null, // Social users don't have a password initially
                     'provider' => $provider,

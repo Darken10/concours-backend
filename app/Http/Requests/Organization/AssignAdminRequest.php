@@ -14,10 +14,10 @@ class AssignAdminRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_id' => ['nullable', 'uuid', 'exists:users,id'],
+            'user_id' => ['required_without_all:email,firstname,lastname', 'uuid', 'exists:users,id'],
             'email' => ['required_without:user_id', 'email', 'max:255', 'unique:users,email'],
-            'first_name' => ['required_without:user_id', 'string', 'max:100'],
-            'last_name' => ['required_without:user_id', 'string', 'max:100'],
+            'firstname' => ['required_without:user_id', 'string', 'max:100'],
+            'lastname' => ['required_without:user_id', 'string', 'max:100'],
             'phone' => ['nullable', 'string', 'max:30'],
             'avatar' => ['nullable', 'url'],
         ];

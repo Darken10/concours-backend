@@ -15,6 +15,7 @@ class OrganizationResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'description' => $this->description,
+            'users' => UserResource::collection($this->whenLoaded('users')),
             'users_count' => $this->whenLoaded('users') ? $this->users->count() : null,
             'created_at' => $this->created_at?->toISOString(),
         ];

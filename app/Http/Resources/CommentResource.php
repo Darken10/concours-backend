@@ -20,7 +20,7 @@ class CommentResource extends JsonResource
             'id' => $this->id,
             'content' => $this->content,
             'author' => new UserResource($this->whenLoaded('user')),
-            'likes_count' => $this->likes()->count() ?? 0,
+            'likes_count' => $this->likes_count ?? 0,
             'replies_count' => $this->replies_count ?? 0,
             'is_liked' => $this->when(
                 auth()->check(),

@@ -15,8 +15,8 @@ class CreateAgentRequest extends FormRequest
     {
         return [
             'email' => ['required', 'email', 'max:255', 'unique:users,email'],
-            'first_name' => ['required', 'string', 'max:100'],
-            'last_name' => ['required', 'string', 'max:100'],
+            'firstname' => ['required', 'string', 'max:100'],
+            'lastname' => ['required', 'string', 'max:100'],
             'phone' => ['nullable', 'string', 'max:30'],
             'avatar' => ['nullable', 'url'],
         ];

@@ -12,10 +12,10 @@ class CreateAgentData extends Data
         public string $email,
 
         #[Required]
-        public string $first_name,
+        public string $firstname,
 
         #[Required]
-        public string $last_name,
+        public string $lastname,
 
         public ?string $phone = null,
         public ?string $avatar = null,
@@ -25,8 +25,8 @@ class CreateAgentData extends Data
     {
         return new self(
             email: (string) ($data['email'] ?? ''),
-            first_name: (string) ($data['first_name'] ?? $data['firstname'] ?? ''),
-            last_name: (string) ($data['last_name'] ?? $data['lastname'] ?? ''),
+            firstname: (string) ($data['firstname'] ?? $data['first_name'] ?? ''),
+            lastname: (string) ($data['lastname'] ?? $data['last_name'] ?? ''),
             phone: $data['phone'] ?? null,
             avatar: $data['avatar'] ?? null,
         );

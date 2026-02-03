@@ -78,11 +78,11 @@ class SocialAuthController extends Controller
                 'provider_id' => $socialUser->getId(),
                 'avatar' => $socialUser->getAvatar(),
 
-                'first_name' => $socialUser->getName()
+                'firstname' => $socialUser->getName()
                     ? explode(' ', $socialUser->getName())[0]
                     : null,
 
-                'last_name' => $socialUser->getName()
+                'lastname' => $socialUser->getName()
                     ? explode(' ', $socialUser->getName(), 2)[1] ?? null
                     : null,
             ]);
