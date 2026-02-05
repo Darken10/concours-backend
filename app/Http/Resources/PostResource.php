@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class PostResource extends JsonResource
@@ -27,8 +28,8 @@ class PostResource extends JsonResource
             'comments_count' => $this->comments_count ?? 0,
             'shares_count' => $this->shares_count ?? 0,
             'is_liked' => $this->when(
-                auth()->check(),
-                fn () => $this->likedBy(auth()->user())
+                Auth::check(),
+                fn () => $this->likedBy(Auth::user())
             ),
             'images' => $this->getMedia('images')->map(fn ($media) => [
                 'url' => $media->getFullUrl(),
