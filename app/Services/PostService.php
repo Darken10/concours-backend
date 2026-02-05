@@ -27,9 +27,18 @@ class PostService
                     $post->addMedia($image)->toMediaCollection('images', 'public');
                 }
             }
+
+            if ($data->category_ids) {
+                $post->categories()->sync($data->category_ids);
+            }
+
+            if ($data->tag_ids) {
+                $post->tags()->sync($data->tag_ids);
+            }
+
             DB::commit();
 
-            return $post->load('user')->loadCount('comments', 'likes');
+            return $post->load('user', 'categories', 'tags')->loadCount('comments', 'likes');
         } catch (\Exception $e) {
             DB::rollBack();
             throw $e;
@@ -60,9 +69,17 @@ class PostService
                 }
             }
 
+            if ($data->category_ids !== null) {
+                $post->categories()->sync($data->category_ids);
+            }
+
+            if ($data->tag_ids !== null) {
+                $post->tags()->sync($data->tag_ids);
+            }
+
             DB::commit();
 
-            return $post->fresh()->load('user')->loadCount('comments', 'likes');
+            return $post->fresh()->load('user', 'categories', 'tags')->loadCount('comments', 'likes');
         } catch (\Exception $e) {
             DB::rollBack();
             throw $e;
@@ -89,7 +106,7 @@ class PostService
 
     public function getPosts($perPage = 15)
     {
-        return Post::with('user')
+        return Post::with('user', 'categories', 'tags')
             ->withCount('comments', 'likes')
             ->latest()
             ->paginate($perPage);
@@ -98,7 +115,7 @@ class PostService
     public function getPostsByUser(User $user, $perPage = 15)
     {
         return Post::where('user_id', $user->id)
-            ->with('user')
+            ->with('user', 'categories', 'tags')
             ->withCount('comments', 'likes')
             ->latest()
             ->paginate($perPage);

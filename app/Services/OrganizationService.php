@@ -2,14 +2,14 @@
 
 namespace App\Services;
 
+use App\Data\Organization\CreateAgentData;
+use App\Data\Organization\CreateOrganizationData;
 use App\Models\Organization;
 use App\Models\User;
-use App\Data\Organization\CreateOrganizationData;
-use App\Data\Organization\CreateAgentData;
 use Illuminate\Auth\Access\AuthorizationException;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class OrganizationService
 {
@@ -20,6 +20,7 @@ class OrganizationService
                 'name' => $data->name,
                 'description' => $data->description,
             ]);
+
             return $org;
         });
     }
@@ -29,8 +30,6 @@ class OrganizationService
      * Accepts either an existing user id in $payload['user_id'] or user data (email/first_name/last_name).
      * The performer must be a super-admin or an admin of the organization. If the org has no admin yet,
      * only a super-admin can assign the first admin.
-     *
-     * @param  array  $payload
      */
     public function assignAdmin(array $payload, User $performer, Organization $organization): User
     {
@@ -38,7 +37,7 @@ class OrganizationService
         $isOrgAdmin = $performer->hasRole('admin') && $performer->organization_id === $organization->id;
 
         // check if org already has an admin
-        $hasAdmin = User::where('organization_id', $organization->id)->whereHas('roles', fn($q) => $q->where('name', 'admin'))->exists();
+        $hasAdmin = User::where('organization_id', $organization->id)->whereHas('roles', fn ($q) => $q->where('name', 'admin'))->exists();
 
         if (! $isSuper && ! $isOrgAdmin) {
             throw new AuthorizationException('Not allowed to assign admin for this organization');
@@ -48,7 +47,7 @@ class OrganizationService
             throw new AuthorizationException('Organization already has an admin');
         }
 
-        return DB::transaction(function () use ($payload, $performer, $organization) {
+        return DB::transaction(function () use ($payload, $organization) {
             if (! empty($payload['user_id'])) {
                 $user = User::findOrFail($payload['user_id']);
                 $user->organization_id = $organization->id;

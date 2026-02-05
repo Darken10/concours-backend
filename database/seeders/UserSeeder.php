@@ -2,14 +2,12 @@
 
 namespace Database\Seeders;
 
-use Carbon\Carbon;
-use App\Models\Role;
-use App\Models\User;
-use Illuminate\Support\Str;
 use App\Enums\UserGenderEnum;
 use App\Enums\UserStatusEnum;
+use App\Models\Role;
+use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Support\Str;
 
 class UserSeeder extends Seeder
 {
@@ -22,7 +20,7 @@ class UserSeeder extends Seeder
         $roles = Role::all();
 
         foreach ($roles as $role) {
-            $email = Str::slug($role->name) . '@example.com';
+            $email = Str::slug($role->name).'@example.com';
 
             $user = User::create([
                 'firstname' => ucfirst($role->name),

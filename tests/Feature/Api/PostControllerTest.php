@@ -327,7 +327,7 @@ describe('POST /api/posts/{post}/like', function () {
         ]);
     });
 
-test('user can like a post multiple times without error', function () {
+    test('user can like a post multiple times without error', function () {
         $user = User::factory()->create();
         $post = Post::factory()->create();
 

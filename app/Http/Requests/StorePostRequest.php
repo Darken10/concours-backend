@@ -28,6 +28,10 @@ class StorePostRequest extends FormRequest
             'images.*' => ['nullable', 'file', 'mimes:jpeg,png,gif,webp', 'max:5120'],
             'attachments' => ['nullable', 'array'],
             'attachments.*' => ['nullable', 'file', 'mimes:pdf,doc,docx', 'max:10240'],
+            'category_ids' => ['nullable', 'array'],
+            'category_ids.*' => ['uuid', 'exists:categories,id'],
+            'tag_ids' => ['nullable', 'array'],
+            'tag_ids.*' => ['uuid', 'exists:tags,id'],
         ];
     }
 

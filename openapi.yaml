@@ -21,6 +21,10 @@ tags:
     description: Gestion des publications
   - name: Comments
     description: Gestion des commentaires
+  - name: Categories
+    description: Gestion des catégories de posts
+  - name: Tags
+    description: Gestion des tags de posts
   - name: Organizations
     description: Gestion des organisations
 
@@ -108,6 +112,16 @@ components:
           description: Contenu du post
         author:
           $ref: '#/components/schemas/UserCreator'
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/Category'
+          description: Catégories du post
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tag'
+          description: Tags du post
         likes_count:
           type: integer
           description: Nombre de likes
@@ -217,6 +231,54 @@ components:
           type: string
           format: uri
           nullable: true
+
+    Category:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          description: Nom de la catégorie
+        slug:
+          type: string
+          description: Slug de la catégorie
+        description:
+          type: string
+          nullable: true
+          description: Description de la catégorie
+        posts_count:
+          type: integer
+          description: Nombre de posts dans cette catégorie
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    Tag:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          description: Nom du tag
+        slug:
+          type: string
+          description: Slug du tag
+        posts_count:
+          type: integer
+          description: Nombre de posts avec ce tag
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
 
     PaginationMeta:
       type: object
@@ -616,6 +678,18 @@ paths:
                     type: string
                     format: binary
                   description: Images à joindre au post
+                category_ids:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+                  description: IDs des catégories du post
+                tag_ids:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+                  description: IDs des tags du post
       responses:
         '201':
           description: Post créé avec succès
@@ -693,6 +767,18 @@ paths:
                   items:
                     type: string
                     format: binary
+                category_ids:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+                  description: IDs des catégories du post
+                tag_ids:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+                  description: IDs des tags du post
       responses:
         '200':
           description: Post modifié avec succès
@@ -1360,3 +1446,129 @@ paths:
           description: Organisation non trouvée
         '422':
           description: Erreur de validation
+
+  # ============================================
+  # CATEGORIES ENDPOINTS
+  # ============================================
+  /categories:
+    get:
+      tags:
+        - Categories
+      summary: Liste des catégories
+      description: Récupère la liste paginée des catégories
+      parameters:
+        - name: per_page
+          in: query
+          schema:
+            type: integer
+            default: 15
+            minimum: 1
+            maximum: 100
+          description: Nombre de catégories par page
+      responses:
+        '200':
+          description: Liste des catégories récupérée
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Category'
+                  meta:
+                    $ref: '#/components/schemas/Paginatio
+  # ============================================
+  # CATEGORIES  Cr  # CATEGORIES ENDPOINTS
+  # ==================e   # ===================    /categories:
+    get:
+      tags:
+        - Cst    get:
+     r      t:         -         summary: List a      description: Récupère la li:
+      parameters:
+        - name: per_page
+          in: query          - name:             in: query
+               schema:
+              type:
+            default: 15
+st            minimum: 1 e            maximum:             description:         responses:
+        '200':
+          descriptiote        '200':             desri          content:
+            application/json:
+       nu            appli                schema:
+      s                 type                  properties::
+                  data:
+  é                    tyc?                   items:
+                           $re                    meta:
+                    $ref: '#/compo/C                    $r:
+  # ============================================
+  # CAT    # CATEGORIES  Cr  # CATEGORIES ENDPOINTS
+  #     # ==================e   # =============      get:
+      tags:
+        - Cst    get:
+     r      t:     s/      t
+         - es     r      t:      :
+      parameters:
+        - name: per_page
+          in: query          - name:    cr        - name: re          in: query    é               schema:
+              type:
+            deor              type:
+               defaultrst            minimum:          '200':
+          descriptiote        '200':             desri          content:
+ 
+           dess:            application/json:
+       nu            appli               c?      nu            appli          s                 type                  pr                    data:
+  é                    tyc?    40  é                  io                           $re                    met                      $ref: '#/compo/C                      # ============================================
+  # CAT  cu  # CAT    # CATEGORIES  Cr  # CATEGORIES ENDPO:
+  #     # ==================e   # =============           tags:
+        - Cst    get:
+     r      t:     s/ in        -        r      t:     s r         - es     r      t:d:      parameters:
+        - name:ap        - name:             in: query                    type:
+            deor              type:
+               defaultrst            minimum:     op            deor                   defaultrst       : st          descriptiote        '200':             desri      sl 
+           dess:            application/json:
+       nu            apie
+        nu            appli               c?    é                    tyc?    40  é                  io                           $re                    met                      $ref: '#/cosc  # CAT  cu  # CAT    # CATEGORIES  Cr  # CATEGORIES ENDPO:
+  #     # ==================e   # =============           tags:
+        - Cst    get:
+     r      t:     s/ in        -        r      t:     s r         - esif  #     # ==================e   # =============                     - Cst    get:
+     r      t:     s/ in        -              r      t:     ses        - name:ap        - name:             in: query                    type:
+            deor       ne            deor              type:
+               defaultrst            minimy:               defaultrst         ra           dess:            application/json:
+       nu            apie
+        nu            appli               c?    é                    tyc?    40  é            '2       nu            apie
+        nu        im        nu            ap    #     # ==================e   # =============           tags:
+        - Cst    get:
+     r      t:     s/ in        -        r      t:     s r         - esif  #     # ==================e   # =============                     - Cst    get:
+     r     40        - Cst    get:
+     r      t:     s/ in        -              r      t:     sn      r      t:     s/ in        -              r      t:     ses        - name:ap        - name:             in: query                    type:
+         ==            deor       ne            deor              type:
+               defaultrst            minimy:               defaultrst         ra  l               defaultrst            minimy:               r_       nu            apie
+        nu            appli               c?    é                    tyc?    40  é                      nu            ap d        nu        im        nu            ap    #     # ==================e   # =============           tags:
+        - Cst           - Cst    get:
+     r      t:     s/ in        -        r      t:     s r         - esif  #     # === p     r      t:     s       r     40        - Cst    get:
+     r      t:     s/ in        -              r      t:     sn      r      t:     s/ in        -              r             r      t:     s/ in        -ts         ==            deor       ne            deor              type:
+               defaultrst            minimy:               defaultrst         ra  l               defaultrst            minimy:       ed               defaultrst            minimy:               defaultrsta:
+        nu            appli               c?    é                    tyc?    40  é                      nu            ap d        nu        im        nu             s        - Cst           - Cst    get:
+     r      t:     s/ in        -        r      t:     s r         - esif  #     # === p     r      t:     s       r     40        - Cst    get:
+     r      t:     s/ in        -              r          r      t:     s/ in        -   ch     r      t:     s/ in        -              r      t:     sn      r      t:     s/ in        -              r             r      t:     s/ ion               defaultrst            minimy:               defaultrst         ra  l               defaultrst            minimy:       ed               defaultrst            minimy:               defaultrsta:
+        nu      n t        nu            appli               c?    é                    tyc?    40  é                      nu            ap d        nu        im        nu             s        - Cst           - Cst    getrm     r      t:     s/ in        -        r      t:     s r         - esif  #     # === p     r      t:     s       r     40        - Cst    get:
+     r      t:     s/ in        -              r          r         r      t:     s/ in        -              r          r      t:     s/ in        -   ch     r      t:     s/ in        -              r     M        nu      n t        nu            appli               c?    é                    tyc?    40  é                      nu            ap d        nu        im        nu             s        - Cst           - Cst    getrm     r      t:     s/ in        -        r      t:     s r         - esif  #     # === p     r      t:     s       r     40        - Cst    get:
+     r      t:     s/ in        -              r          r         r        r      t:     s/ in        -              r          r         r      t:     s/ in        -              r          r      t:     s/ in        -   ch     r      t:     s/ in        -              r     M        nu      n t        nu            appli               c?    é                    tyc?    40  é                      nu            ap d        nu              r      t:     s/ in        -              r          r         r        r      t:     s/ in        -              r          r         r      t:     s/ in        -              r          r      t:     s/ in        -   ch     r      t:     s/ in        -              r     M        nu      n t        nu            appli               c?    é                    tyc?    40  é                      nu            ap d        nu              r      t:     s/ in        -              r          r         r        r      t:     s/ in        -              r          r  onses:
+        '200':
+          description: Tag supprimé avec succès
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Tag supprimé avec succès
+        '401':
+          description: Non authentifié
+        '403':
+          description: Non autorisé
+        '404':
+          description: Tag non trouvé

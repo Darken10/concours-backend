@@ -3,11 +3,11 @@
 namespace App\Models\Post;
 
 use App\Models\User;
-use Spatie\MediaLibrary\HasMedia;
-use Illuminate\Database\Eloquent\Model;
-use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 class Post extends Model implements HasMedia
 {
@@ -46,6 +46,16 @@ class Post extends Model implements HasMedia
         return $this->hasMany(Like::class);
     }
 
+    public function categories()
+    {
+        return $this->belongsToMany(Category::class, 'category_post');
+    }
+
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class, 'post_tag');
+    }
+
     public function likedBy(User $user): bool
     {
         return $this->likes()->where('user_id', $user->id)->exists();
@@ -59,5 +69,4 @@ class Post extends Model implements HasMedia
         $this->addMediaCollection('attachments')
             ->acceptsMimeTypes(['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document']);
     }
-
 }

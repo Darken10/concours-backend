@@ -3,7 +3,6 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
-use App\Http\Resources\UserCreatorResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class PostResource extends JsonResource
@@ -22,6 +21,8 @@ class PostResource extends JsonResource
             'title' => $this->title,
             'content' => $this->content,
             'author' => new UserCreatorResource($this->whenLoaded('user')),
+            'categories' => CategoryResource::collection($this->whenLoaded('categories')),
+            'tags' => TagResource::collection($this->whenLoaded('tags')),
             'likes_count' => $this->likes_count ?? 0,
             'comments_count' => $this->comments_count ?? 0,
             'shares_count' => $this->shares_count ?? 0,

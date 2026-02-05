@@ -1,9 +1,9 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -37,7 +37,7 @@ return new class extends Migration
             });
         } else {
             // MySQL/PostgreSQL can use ALTER MODIFY/ALTER COLUMN
-            DB::statement("ALTER TABLE `media` MODIFY `model_id` CHAR(36) NOT NULL");
+            DB::statement('ALTER TABLE `media` MODIFY `model_id` CHAR(36) NOT NULL');
         }
     }
 
@@ -71,7 +71,7 @@ return new class extends Migration
             });
         } else {
             // MySQL/PostgreSQL
-            DB::statement("ALTER TABLE `media` MODIFY `model_id` BIGINT UNSIGNED NOT NULL");
+            DB::statement('ALTER TABLE `media` MODIFY `model_id` BIGINT UNSIGNED NOT NULL');
         }
     }
 };

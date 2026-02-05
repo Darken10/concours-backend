@@ -136,7 +136,7 @@ describe('GET /api/organizations/{organization}', function () {
 });
 
 describe('POST /api/organizations/{organization}/agents', function () {
-test('authenticated user can create an agent', function () {
+    test('authenticated user can create an agent', function () {
         $organization = Organization::factory()->create();
         $owner = User::factory()->create(['organization_id' => $organization->id]);
         $owner->assignRole('admin');
@@ -218,7 +218,7 @@ test('authenticated user can create an agent', function () {
 });
 
 describe('POST /api/organizations/{organization}/admins', function () {
-test('admin can assign another admin', function () {
+    test('admin can assign another admin', function () {
         $organization = Organization::factory()->create();
         $owner = User::factory()->create(['organization_id' => $organization->id]);
         $owner->assignRole('admin');

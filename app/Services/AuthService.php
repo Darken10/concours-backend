@@ -2,20 +2,17 @@
 
 namespace App\Services;
 
-use App\Models\User;
-use App\Enums\UserGenderEnum;
-use App\Enums\UserStatusEnum;
-use App\Data\Auth\LoginUserData;
 use App\Data\Auth\CreateUserData;
-use Illuminate\Auth\Events\Login;
-use Illuminate\Support\Facades\DB;
+use App\Data\Auth\LoginUserData;
+use App\Enums\UserStatusEnum;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
 class AuthService
 {
-
     public function registerUser(CreateUserData $data): array
     {
         try {
@@ -36,6 +33,7 @@ class AuthService
 
             $token = $user->createToken('auth_token')->plainTextToken;
             DB::commit();
+
             return [
                 'user' => $user,
                 'token' => $token,
@@ -46,17 +44,15 @@ class AuthService
         }
     }
 
-
     public function loginUser(LoginUserData $credentials): array
     {
         $user = User::where('email', $credentials->login)->first();
-
 
         $field = filter_var($credentials->login, FILTER_VALIDATE_EMAIL)
             ? 'email'
             : 'phone';
 
-        if (!Auth::attempt([
+        if (! Auth::attempt([
             $field => $credentials->login,
             'password' => $credentials->password,
         ])) {
@@ -74,7 +70,6 @@ class AuthService
             'token' => $token,
         ];
     }
-
 
     public function findOrCreateSocialUser(string $provider, object $socialUser): array
     {

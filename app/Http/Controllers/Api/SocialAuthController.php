@@ -2,20 +2,20 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\User;
-use Illuminate\Support\Str;
-use Illuminate\Http\Request;
-use App\Services\AuthService;
-use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
+use App\Models\User;
+use App\Services\AuthService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
-use Illuminate\Database\Eloquent\Attributes\UseResource;
 
 class SocialAuthController extends Controller
 {
     protected AuthService $authService;
+
     protected array $providers = ['google', 'facebook', 'github', 'twitter'];
 
     public function __construct(AuthService $authService)
@@ -58,7 +58,6 @@ class SocialAuthController extends Controller
         return $response;
     }
 
-
     public function callback(Request $request, string $provider)
     {
         abort_unless(in_array($provider, $this->providers), 404);
@@ -69,7 +68,7 @@ class SocialAuthController extends Controller
             ->where('provider_id', $socialUser->getId())
             ->first();
 
-        if (!$user) {
+        if (! $user) {
             $user = User::create([
                 'email' => $socialUser->getEmail(),
                 'password' => Hash::make(Str::random(32)),

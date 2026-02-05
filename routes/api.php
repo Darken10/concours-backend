@@ -1,10 +1,12 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\CommentController;
 use App\Http\Controllers\Api\OrganizationController;
 use App\Http\Controllers\Api\PostController;
 use App\Http\Controllers\Api\SocialAuthController;
+use App\Http\Controllers\Api\TagController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('auth')->group(function () {
@@ -68,5 +70,31 @@ Route::prefix('comments')->group(function () {
         // Likes
         Route::post('/{comment}/like', [CommentController::class, 'like']);
         Route::post('/{comment}/unlike', [CommentController::class, 'unlike']);
+    });
+});
+
+Route::prefix('categories')->group(function () {
+    // Routes publiques
+    Route::get('/', [CategoryController::class, 'index']);
+    Route::get('/{category}', [CategoryController::class, 'show']);
+
+    // Routes protégées
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/', [CategoryController::class, 'store']);
+        Route::put('/{category}', [CategoryController::class, 'update']);
+        Route::delete('/{category}', [CategoryController::class, 'destroy']);
+    });
+});
+
+Route::prefix('tags')->group(function () {
+    // Routes publiques
+    Route::get('/', [TagController::class, 'index']);
+    Route::get('/{tag}', [TagController::class, 'show']);
+
+    // Routes protégées
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/', [TagController::class, 'store']);
+        Route::put('/{tag}', [TagController::class, 'update']);
+        Route::delete('/{tag}', [TagController::class, 'destroy']);
     });
 });

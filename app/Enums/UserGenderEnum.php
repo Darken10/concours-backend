@@ -11,5 +11,4 @@ enum UserGenderEnum: string
     {
         return array_map(fn (self $gender) => $gender->value, self::cases());
     }
-
 }

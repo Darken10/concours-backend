@@ -3,8 +3,8 @@
 namespace App\Http\Requests\Auth;
 
 use App\Enums\UserGenderEnum;
-use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class RegisterUserRequest extends FormRequest
 {
@@ -24,7 +24,7 @@ class RegisterUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-             'email' => ['required', 'email', 'max:255', 'unique:users,email'],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'provider' => ['nullable', 'string', 'max:50'],
             'provider_id' => ['nullable', 'string', 'max:255'],
@@ -37,7 +37,7 @@ class RegisterUserRequest extends FormRequest
         ];
     }
 
-     public function messages(): array
+    public function messages(): array
     {
         return [
             'email.required' => 'L’adresse email est obligatoire.',

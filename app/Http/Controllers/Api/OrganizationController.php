@@ -2,16 +2,15 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\Organization;
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-use App\Services\OrganizationService;
 use App\Data\Organization\CreateAgentData;
-use App\Http\Resources\OrganizationResource;
 use App\Data\Organization\CreateOrganizationData;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Organization\AssignAdminRequest;
 use App\Http\Requests\Organization\CreateAgentRequest;
 use App\Http\Requests\Organization\CreateOrganizationRequest;
-use App\Http\Requests\Organization\AssignAdminRequest;
+use App\Http\Resources\OrganizationResource;
+use App\Models\Organization;
+use App\Services\OrganizationService;
 
 class OrganizationController extends Controller
 {
@@ -34,6 +33,7 @@ class OrganizationController extends Controller
     public function show(Organization $organization)
     {
         $organization->load('users');
+
         return response()->json(new OrganizationResource($organization));
     }
 

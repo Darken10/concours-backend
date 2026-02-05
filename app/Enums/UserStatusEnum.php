@@ -26,5 +26,4 @@ enum UserStatusEnum: string
     {
         return self::labels()[$this->value];
     }
-
 }

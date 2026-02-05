@@ -21,5 +21,11 @@ class UpdatePostData extends Data
 
         #[Nullable]
         public ?array $attachments = null,
+
+        #[Nullable]
+        public ?array $category_ids = null,
+
+        #[Nullable]
+        public ?array $tag_ids = null,
     ) {}
 }
