@@ -315,7 +315,7 @@ describe('POST /api/comments/{comment}/like', function () {
         ]);
     });
 
-test('user can like a comment multiple times without error', function () {
+    test('user can like a comment multiple times without error', function () {
         $user = User::factory()->create();
         $comment = Comment::factory()->create();
 

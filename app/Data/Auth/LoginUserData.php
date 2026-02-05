@@ -1,11 +1,9 @@
 <?php
 
-
 namespace App\Data\Auth;
 
-use App\Rules\EmailOrPhone;
-use Spatie\LaravelData\Data;
 use Spatie\LaravelData\Attributes\Validation\Required;
+use Spatie\LaravelData\Data;
 
 class LoginUserData extends Data
 {
@@ -19,11 +17,11 @@ class LoginUserData extends Data
 
     public static function fromArray(array $data): self
     {
-        if (!isset($data['email']) && !isset($data['phone'])) {
+        if (! isset($data['email']) && ! isset($data['phone'])) {
             throw new \InvalidArgumentException('login is required');
         }
 
-        if (!isset($data['password'])) {
+        if (! isset($data['password'])) {
             throw new \InvalidArgumentException('password is required');
         }
 

@@ -11,7 +11,10 @@ class StorePostRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        // Authorization for creating posts is handled by the PostPolicy in the controller,
+        // but the FormRequest must allow the request to proceed so the controller
+        // can call the policy. Allow authenticated users here.
+        return auth()->check();
     }
 
     /**

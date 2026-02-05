@@ -2,12 +2,12 @@
 
 namespace App\Data\Auth;
 
-use Spatie\LaravelData\Data;
 use App\Enums\UserGenderEnum;
-use Spatie\LaravelData\Attributes\Validation\Min;
 use Spatie\LaravelData\Attributes\Validation\Email;
+use Spatie\LaravelData\Attributes\Validation\Min;
 use Spatie\LaravelData\Attributes\Validation\Nullable;
 use Spatie\LaravelData\Attributes\Validation\Required;
+use Spatie\LaravelData\Data;
 
 class CreateUserData extends Data
 {
@@ -35,16 +35,15 @@ class CreateUserData extends Data
 
         #[Nullable]
         public ?string $phone
-    ){}
-
+    ) {}
 
     public static function fromArray(array $data): self
     {
-        if (!isset($data['email'])) {
+        if (! isset($data['email'])) {
             throw new \InvalidArgumentException('email is required');
         }
 
-        if (!isset($data['password'])) {
+        if (! isset($data['password'])) {
             throw new \InvalidArgumentException('password is required');
         }
 

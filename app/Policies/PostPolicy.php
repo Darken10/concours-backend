@@ -28,8 +28,15 @@ class PostPolicy
      */
     public function create(User $user): bool
     {
-        //return $user->isAdmin() || $user->isSuperAdmin() || $user->isAgent() || $user->isUser();
-        return true;
+        if ($user->isSuperAdmin() || $user->isAdmin()) {
+            return true;
+        }
+
+        if ($user->isAgent() && $user->can('edit posts')) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -37,7 +44,17 @@ class PostPolicy
      */
     public function update(User $user, Post $post): bool
     {
-        return $user->id === $post->user_id || $user->isAdmin() || $user->isSuperAdmin();
+        // User can always update their own post
+        if ($user->id === $post->user_id) {
+            return true;
+        }
+
+        // Only admin and super-admin can update others' posts
+        if ($user->isSuperAdmin() || $user->isAdmin()) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -45,7 +62,17 @@ class PostPolicy
      */
     public function delete(User $user, Post $post): bool
     {
-        return $user->id === $post->user_id || $user->isAdmin() || $user->isSuperAdmin();
+        // User can always delete their own post
+        if ($user->id === $post->user_id) {
+            return true;
+        }
+
+        // Only admin and super-admin can delete others' posts
+        if ($user->isSuperAdmin() || $user->isAdmin()) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -53,7 +80,15 @@ class PostPolicy
      */
     public function restore(User $user, Post $post): bool
     {
-        return $user->isAdmin() || $user->isSuperAdmin() || $user->isAgent();
+        if ($user->isSuperAdmin() || $user->isAdmin()) {
+            return true;
+        }
+
+        if ($user->isAgent() && $user->can('edit posts')) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -61,6 +96,14 @@ class PostPolicy
      */
     public function forceDelete(User $user, Post $post): bool
     {
-        return $user->isAdmin() || $user->isSuperAdmin() || $user->isAgent();
+        if ($user->isSuperAdmin() || $user->isAdmin()) {
+            return true;
+        }
+
+        if ($user->isAgent() && $user->can('edit posts')) {
+            return true;
+        }
+
+        return false;
     }
 }

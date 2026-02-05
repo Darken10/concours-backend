@@ -21,6 +21,10 @@ tags:
     description: Gestion des publications
   - name: Comments
     description: Gestion des commentaires
+  - name: Categories
+    description: Gestion des catégories de posts
+  - name: Tags
+    description: Gestion des tags de posts
   - name: Organizations
     description: Gestion des organisations
 
@@ -87,90 +91,6 @@ components:
           format: uuid
           nullable: true
           description: ID de l'organisation
-        created_at:
-          type: string
-          format: date-time
-        updated_at:
-          type: string
-          format: date-time
-
-    Post:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        title:
-          type: string
-          description: Titre du post
-        content:
-          type: string
-          description: Contenu du post
-        author:
-          $ref: '#/components/schemas/UserCreator'
-        likes_count:
-          type: integer
-          description: Nombre de likes
-        comments_count:
-          type: integer
-          description: Nombre de commentaires
-        shares_count:
-          type: integer
-          description: Nombre de partages
-        is_liked:
-          type: boolean
-          description: Si l'utilisateur connecté a liké ce post
-        images:
-          type: array
-          items:
-            type: object
-            properties:
-              url:
-                type: string
-                format: uri
-              mime_type:
-                type: string
-        created_at:
-          type: string
-          format: date-time
-        updated_at:
-          type: string
-          format: date-time
-
-    Comment:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        content:
-          type: string
-          description: Contenu du commentaire
-        author:
-          $ref: '#/components/schemas/User'
-        likes_count:
-          type: integer
-          description: Nombre de likes
-        replies_count:
-          type: integer
-          description: Nombre de réponses
-        is_liked:
-          type: boolean
-          description: Si l'utilisateur connecté a liké ce commentaire
-        replies:
-          type: array
-          items:
-            $ref: '#/components/schemas/Comment'
-        attachments:
-          type: array
-          items:
-            type: object
-            properties:
-              id:
-                type: string
-              url:
-                type: string
-                format: uri
               name:
                 type: string
         created_at:
@@ -217,6 +137,54 @@ components:
           type: string
           format: uri
           nullable: true
+
+    Category:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          description: Nom de la catégorie
+        slug:
+          type: string
+          description: Slug de la catégorie
+        description:
+          type: string
+          nullable: true
+          description: Description de la catégorie
+        posts_count:
+          type: integer
+          description: Nombre de posts dans cette catégorie
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    Tag:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          description: Nom du tag
+        slug:
+          type: string
+          description: Slug du tag
+        posts_count:
+          type: integer
+          description: Nombre de posts avec ce tag
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
 
     PaginationMeta:
       type: object
@@ -616,6 +584,18 @@ paths:
                     type: string
                     format: binary
                   description: Images à joindre au post
+                category_ids:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+                  description: IDs des catégories du post
+                tag_ids:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+                  description: IDs des tags du post
       responses:
         '201':
           description: Post créé avec succès
@@ -693,6 +673,18 @@ paths:
                   items:
                     type: string
                     format: binary
+                category_ids:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+                  description: IDs des catégories du post
+                tag_ids:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+                  description: IDs des tags du post
       responses:
         '200':
           description: Post modifié avec succès
@@ -1360,3 +1352,328 @@ paths:
           description: Organisation non trouvée
         '422':
           description: Erreur de validation
+
+  # ============================================
+  # CATEGORIES ENDPOINTS
+  # ============================================
+  /categories:
+    get:
+      tags:
+        - Categories
+      summary: Liste des catégories
+      description: Récupère la liste paginée des catégories
+      parameters:
+        - name: per_page
+          in: query
+          schema:
+            type: integer
+            default: 15
+            minimum: 1
+            maximum: 100
+          description: Nombre de catégories par page
+      responses:
+        '200':
+          description: Liste des catégories récupérée
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Category'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
+
+    post:
+      tags:
+        - Categories
+      summary: Créer une catégorie
+      description: Crée une nouvelle catégorie (nécessite authentification et privilèges)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+      responses:
+        '201':
+          description: Catégorie créée avec succès
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+        '401':
+          description: Non authentifié
+        '403':
+          description: Non autorisé (rôle requis super-admin, admin ou agent avec permission `edit categories`)
+        '422':
+          description: Erreur de validation
+
+  /categories/{category}:
+    get:
+      tags:
+        - Categories
+      summary: Détails d'une catégorie
+      description: Récupère les détails d'une catégorie spécifique
+      parameters:
+        - name: category
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Catégorie récupérée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+        '404':
+          description: Catégorie non trouvée
+
+    put:
+      tags:
+        - Categories
+      summary: Modifier une catégorie
+      description: Modifie une catégorie existante (nécessite authentification et privilèges)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: category
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+      responses:
+        '200':
+          description: Catégorie modifiée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+        '401':
+          description: Non authentifié
+        '403':
+          description: Non autorisé (rôle requis super-admin, admin ou agent avec permission `edit categories`)
+        '404':
+          description: Catégorie non trouvée
+        '422':
+          description: Erreur de validation
+
+    delete:
+      tags:
+        - Categories
+      summary: Supprimer une catégorie
+      description: Supprime une catégorie existante (nécessite authentification et privilèges)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: category
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Catégorie supprimée avec succès
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Catégorie supprimée avec succès
+        '401':
+          description: Non authentifié
+        '403':
+          description: Non autorisé (rôle requis super-admin, admin ou agent avec permission `edit categories`)
+        '404':
+          description: Catégorie non trouvée
+
+  # ============================================
+  # TAGS ENDPOINTS
+  # ============================================
+  /tags:
+    get:
+      tags:
+        - Tags
+      summary: Liste des tags
+      description: Récupère la liste paginée des tags
+      parameters:
+        - name: per_page
+          in: query
+          schema:
+            type: integer
+            default: 15
+            minimum: 1
+            maximum: 100
+          description: Nombre de tags par page
+      responses:
+        '200':
+          description: Liste des tags récupérée
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Tag'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
+        '401':
+          description: Non authentifié
+
+    post:
+      tags:
+        - Tags
+      summary: Créer un tag
+      description: Crée un nouveau tag (nécessite authentification et privilèges)
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+              properties:
+                name:
+                  type: string
+      responses:
+        '201':
+          description: Tag créé avec succès
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tag'
+        '401':
+          description: Non authentifié
+        '403':
+          description: Non autorisé (rôle requis super-admin, admin ou agent avec permission `edit tags`)
+        '422':
+          description: Erreur de validation
+
+  /tags/{tag}:
+    get:
+      tags:
+        - Tags
+      summary: Détails d'un tag
+      description: Récupère les détails d'un tag spécifique
+      parameters:
+        - name: tag
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Tag récupéré
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tag'
+        '404':
+          description: Tag non trouvé
+
+    put:
+      tags:
+        - Tags
+      summary: Modifier un tag
+      description: Modifie un tag existant (nécessite authentification et privilèges)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: tag
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+      responses:
+        '200':
+          description: Tag modifié
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tag'
+        '401':
+          description: Non authentifié
+        '403':
+          description: Non autorisé (rôle requis super-admin, admin ou agent avec permission `edit tags`)
+        '404':
+          description: Tag non trouvé
+        '422':
+          description: Erreur de validation
+
+    delete:
+      tags:
+        - Tags
+      summary: Supprimer un tag
+      description: Supprime un tag existant (nécessite authentification et privilèges)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: tag
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Tag supprimé avec succès
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Tag supprimé avec succès
+        '401':
+          description: Non authentifié
+        '403':
+          description: Non autorisé (rôle requis super-admin, admin ou agent avec permission `edit tags`)
+        '404':
+          description: Tag non trouvé
+

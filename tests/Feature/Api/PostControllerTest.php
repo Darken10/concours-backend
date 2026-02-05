@@ -11,6 +11,16 @@ uses(RefreshDatabase::class);
 
 beforeEach(function () {
     $this->seed();
+    // Ensure edit posts permission exists
+    if (! \Illuminate\Support\Facades\DB::table('permissions')->where('name', 'edit posts')->exists()) {
+        \Illuminate\Support\Facades\DB::table('permissions')->insert([
+            'id' => \Illuminate\Support\Str::uuid(),
+            'name' => 'edit posts',
+            'guard_name' => 'web',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+    }
 });
 
 describe('GET /api/posts', function () {
@@ -87,6 +97,7 @@ describe('POST /api/posts', function () {
     test('authenticated agent can create a post', function () {
         $user = User::factory()->create();
         $user->assignRole('agent');
+        $user->givePermissionTo('edit posts');
 
         $response = $this->actingAs($user)
             ->postJson('/api/posts', [
@@ -114,6 +125,18 @@ describe('POST /api/posts', function () {
         ]);
 
         $response->assertUnauthorized();
+    });
+
+    test('authenticated non-privileged user cannot create post', function () {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)
+            ->postJson('/api/posts', [
+                'title' => 'New Post',
+                'content' => 'Post content with enough characters',
+            ]);
+
+        $response->assertForbidden();
     });
 
     test('post requires title', function () {
@@ -145,6 +168,7 @@ describe('POST /api/posts', function () {
     test('post can include media', function () {
         $user = User::factory()->create();
         $user->assignRole('agent');
+        $user->givePermissionTo('edit posts');
 
         $response = $this->actingAs($user)
             ->postJson('/api/posts', [
@@ -327,7 +351,7 @@ describe('POST /api/posts/{post}/like', function () {
         ]);
     });
 
-test('user can like a post multiple times without error', function () {
+    test('user can like a post multiple times without error', function () {
         $user = User::factory()->create();
         $post = Post::factory()->create();
 
