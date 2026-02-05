@@ -44,7 +44,7 @@ class Post extends Model implements HasMedia
     }
 
     public function getSharesCountAttribute()    {
-        return $this->likes()->where('is_share', true)->count();
+        return 0; // Placeholder for shares count, implement as needed
     }
 
     public function user()
