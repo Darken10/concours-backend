@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Enums\UserRoleEnum;
+use App\Models\Permission;
 use App\Models\Role;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\PermissionRegistrar;
@@ -23,10 +24,20 @@ class RolesAndPermissionsSeeder extends Seeder
         $superAdminRole = Role::create(['name' => UserRoleEnum::SUPER_ADMIN->value]);
         $agentRole = Role::create(['name' => UserRoleEnum::AGENT->value]);
 
-        // create permissions (example)
-        // Permission::create(['name' => 'edit articles']);
+        // create permissions for posts, categories, and tags
+        $editPostsPermission = Permission::create(['name' => 'edit posts']);
+        $editCategoriesPermission = Permission::create(['name' => 'edit categories']);
+        $editTagsPermission = Permission::create(['name' => 'edit tags']);
 
-        // assign permissions to roles
-        // $adminRole->givePermissionTo(Permission::all());
+        // assign permissions to agent role
+        $agentRole->givePermissionTo([
+            $editPostsPermission,
+            $editCategoriesPermission,
+            $editTagsPermission,
+        ]);
+
+        // assign all permissions to admin and super-admin roles
+        $adminRole->givePermissionTo(Permission::all());
+        $superAdminRole->givePermissionTo(Permission::all());
     }
 }

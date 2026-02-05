@@ -44,15 +44,13 @@ class PostPolicy
      */
     public function update(User $user, Post $post): bool
     {
+        // User can always update their own post
         if ($user->id === $post->user_id) {
             return true;
         }
 
+        // Only admin and super-admin can update others' posts
         if ($user->isSuperAdmin() || $user->isAdmin()) {
-            return true;
-        }
-
-        if ($user->isAgent() && $user->can('edit posts')) {
             return true;
         }
 
@@ -64,15 +62,13 @@ class PostPolicy
      */
     public function delete(User $user, Post $post): bool
     {
+        // User can always delete their own post
         if ($user->id === $post->user_id) {
             return true;
         }
 
+        // Only admin and super-admin can delete others' posts
         if ($user->isSuperAdmin() || $user->isAdmin()) {
-            return true;
-        }
-
-        if ($user->isAgent() && $user->can('edit posts')) {
             return true;
         }
 
