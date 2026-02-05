@@ -45,7 +45,6 @@ describe('POST /api/categories', function () {
         $response = $this->actingAs($user)
             ->postJson('/api/categories', [
                 'name' => 'Test Category',
-                'slug' => 'test-category',
             ]);
 
         $response->assertCreated()
@@ -57,7 +56,6 @@ describe('POST /api/categories', function () {
     test('unauthenticated user cannot create category', function () {
         $response = $this->postJson('/api/categories', [
             'name' => 'No Auth',
-            'slug' => 'no-auth',
         ]);
 
         $response->assertUnauthorized();
@@ -69,7 +67,6 @@ describe('POST /api/categories', function () {
         $response = $this->actingAs($user)
             ->postJson('/api/categories', [
                 'name' => 'Forbidden',
-                'slug' => 'forbidden',
             ]);
 
         $response->assertForbidden();
@@ -83,7 +80,7 @@ describe('POST /api/categories', function () {
             ->postJson('/api/categories', []);
 
         $response->assertUnprocessable()
-            ->assertJsonValidationErrors(['name', 'slug']);
+            ->assertJsonValidationErrors(['name']);
     });
 });
 
@@ -96,7 +93,6 @@ describe('PUT /api/categories/{category}', function () {
         $response = $this->actingAs($user)
             ->putJson("/api/categories/{$category->id}", [
                 'name' => 'New',
-                'slug' => 'new',
             ]);
 
         $response->assertSuccessful()
@@ -112,7 +108,6 @@ describe('PUT /api/categories/{category}', function () {
         $response = $this->actingAs($user)
             ->putJson("/api/categories/{$category->id}", [
                 'name' => 'New',
-                'slug' => 'new',
             ]);
 
         $response->assertForbidden();

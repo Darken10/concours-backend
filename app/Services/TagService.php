@@ -6,6 +6,7 @@ use App\Data\Blog\CreateTagData;
 use App\Data\Blog\UpdateTagData;
 use App\Models\Post\Tag;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class TagService
 {
@@ -16,7 +17,7 @@ class TagService
 
             $tag = Tag::create([
                 'name' => $data->name,
-                'slug' => $data->slug,
+                'slug' => Str::slug($data->name),
             ]);
 
             DB::commit();
@@ -33,10 +34,16 @@ class TagService
         try {
             DB::beginTransaction();
 
-            $tag->update([
-                'name' => $data->name,
-                'slug' => $data->slug,
-            ]);
+            $updateData = [];
+
+            if ($data->name !== $tag->name) {
+                $updateData['name'] = $data->name;
+                $updateData['slug'] = Str::slug($data->name);
+            }
+
+            if (! empty($updateData)) {
+                $tag->update($updateData);
+            }
 
             DB::commit();
 

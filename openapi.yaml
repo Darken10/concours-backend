@@ -1401,11 +1401,8 @@ paths:
               type: object
               required:
                 - name
-                - slug
               properties:
                 name:
-                  type: string
-                slug:
                   type: string
                 description:
                   type: string
@@ -1419,7 +1416,7 @@ paths:
         '401':
           description: Non authentifié
         '403':
-          description: Non autorisé (rôle requis: super-admin, admin ou agent avec permission `edit categories`)
+          description: Non autorisé (rôle requis super-admin, admin ou agent avec permission `edit categories`)
         '422':
           description: Erreur de validation
 
@@ -1469,8 +1466,6 @@ paths:
               properties:
                 name:
                   type: string
-                slug:
-                  type: string
                 description:
                   type: string
       responses:
@@ -1483,7 +1478,7 @@ paths:
         '401':
           description: Non authentifié
         '403':
-          description: Non autorisé (rôle requis: super-admin, admin ou agent avec permission `edit categories`)
+          description: Non autorisé (rôle requis super-admin, admin ou agent avec permission `edit categories`)
         '404':
           description: Catégorie non trouvée
         '422':
@@ -1517,7 +1512,7 @@ paths:
         '401':
           description: Non authentifié
         '403':
-          description: Non autorisé (rôle requis: super-admin, admin ou agent avec permission `edit categories`)
+          description: Non autorisé (rôle requis super-admin, admin ou agent avec permission `edit categories`)
         '404':
           description: Catégorie non trouvée
 
@@ -1571,11 +1566,8 @@ paths:
               type: object
               required:
                 - name
-                - slug
               properties:
                 name:
-                  type: string
-                slug:
                   type: string
       responses:
         '201':
@@ -1587,7 +1579,7 @@ paths:
         '401':
           description: Non authentifié
         '403':
-          description: Non autorisé (rôle requis: super-admin, admin ou agent avec permission `edit tags`)
+          description: Non autorisé (rôle requis super-admin, admin ou agent avec permission `edit tags`)
         '422':
           description: Erreur de validation
 
@@ -1637,8 +1629,6 @@ paths:
               properties:
                 name:
                   type: string
-                slug:
-                  type: string
       responses:
         '200':
           description: Tag modifié
@@ -1649,7 +1639,7 @@ paths:
         '401':
           description: Non authentifié
         '403':
-          description: Non autorisé (rôle requis: super-admin, admin ou agent avec permission `edit tags`)
+          description: Non autorisé (rôle requis super-admin, admin ou agent avec permission `edit tags`)
         '404':
           description: Tag non trouvé
         '422':
@@ -1683,7 +1673,7 @@ paths:
         '401':
           description: Non authentifié
         '403':
-          description: Non autorisé (rôle requis: super-admin, admin ou agent avec permission `edit tags`)
+          description: Non autorisé (rôle requis super-admin, admin ou agent avec permission `edit tags`)
         '404':
           description: Tag non trouvé
 

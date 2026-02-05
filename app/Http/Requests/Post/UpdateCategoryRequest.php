@@ -40,7 +40,6 @@ class UpdateCategoryRequest extends FormRequest
 
         return [
             'name' => ['required', 'string', 'min:2', 'max:100', 'unique:categories,name,'.$categoryId],
-            'slug' => ['required', 'string', 'min:2', 'max:100', 'unique:categories,slug,'.$categoryId, 'regex:/^[a-z0-9-]+$/'],
             'description' => ['nullable', 'string', 'max:500'],
         ];
     }

@@ -6,6 +6,7 @@ use App\Data\Blog\CreateCategoryData;
 use App\Data\Blog\UpdateCategoryData;
 use App\Models\Post\Category;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class CategoryService
 {
@@ -16,7 +17,7 @@ class CategoryService
 
             $category = Category::create([
                 'name' => $data->name,
-                'slug' => $data->slug,
+                'slug' => Str::slug($data->name),
                 'description' => $data->description,
             ]);
 
@@ -34,11 +35,16 @@ class CategoryService
         try {
             DB::beginTransaction();
 
-            $category->update([
-                'name' => $data->name,
-                'slug' => $data->slug,
+            $updateData = [
                 'description' => $data->description,
-            ]);
+            ];
+
+            if ($data->name !== $category->name) {
+                $updateData['name'] = $data->name;
+                $updateData['slug'] = Str::slug($data->name);
+            }
+
+            $category->update($updateData);
 
             DB::commit();
 

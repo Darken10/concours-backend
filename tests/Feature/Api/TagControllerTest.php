@@ -45,7 +45,6 @@ describe('POST /api/tags', function () {
         $response = $this->actingAs($user)
             ->postJson('/api/tags', [
                 'name' => 'Test Tag',
-                'slug' => 'test-tag',
             ]);
 
         $response->assertCreated()
@@ -57,7 +56,6 @@ describe('POST /api/tags', function () {
     test('unauthenticated user cannot create tag', function () {
         $response = $this->postJson('/api/tags', [
             'name' => 'No Auth',
-            'slug' => 'no-auth',
         ]);
 
         $response->assertUnauthorized();
@@ -69,7 +67,6 @@ describe('POST /api/tags', function () {
         $response = $this->actingAs($user)
             ->postJson('/api/tags', [
                 'name' => 'Forbidden',
-                'slug' => 'forbidden',
             ]);
 
         $response->assertForbidden();
@@ -83,7 +80,7 @@ describe('POST /api/tags', function () {
             ->postJson('/api/tags', []);
 
         $response->assertUnprocessable()
-            ->assertJsonValidationErrors(['name', 'slug']);
+            ->assertJsonValidationErrors(['name']);
     });
 });
 
@@ -96,7 +93,6 @@ describe('PUT /api/tags/{tag}', function () {
         $response = $this->actingAs($user)
             ->putJson("/api/tags/{$tag->id}", [
                 'name' => 'New',
-                'slug' => 'new',
             ]);
 
         $response->assertSuccessful()
@@ -112,7 +108,6 @@ describe('PUT /api/tags/{tag}', function () {
         $response = $this->actingAs($user)
             ->putJson("/api/tags/{$tag->id}", [
                 'name' => 'New',
-                'slug' => 'new',
             ]);
 
         $response->assertForbidden();

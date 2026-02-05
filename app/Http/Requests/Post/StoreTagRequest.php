@@ -37,7 +37,7 @@ class StoreTagRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'min:2', 'max:50', 'unique:tags,name'],
-            'slug' => ['required', 'string', 'min:2', 'max:50', 'unique:tags,slug', 'regex:/^[a-z0-9-]+$/'],
+
         ];
     }
 
