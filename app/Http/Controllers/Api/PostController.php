@@ -111,16 +111,16 @@ class PostController extends Controller
 
     public function like(Post $post): JsonResponse
     {
-        $like = $this->postService->likePost($post, auth()->user());
+        $this->postService->likePost($post, auth()->user());
 
-        return response()->json(['message' => 'Post aimé'], 201);
+        return response()->json(new PostResource($post->load('user', 'categories', 'tags', 'comments', 'likes')), 201);
     }
 
     public function unlike(Post $post): JsonResponse
     {
         $this->postService->unlikePost($post, auth()->user());
 
-        return response()->json(['message' => 'Like supprimé'], 200);
+        return response()->json(new PostResource($post->load('user', 'categories', 'tags', 'comments', 'likes')), 200);
     }
 
     public function likes(Request $request, Post $post): JsonResponse
