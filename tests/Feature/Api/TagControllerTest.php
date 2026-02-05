@@ -63,6 +63,18 @@ describe('POST /api/tags', function () {
         $response->assertUnauthorized();
     });
 
+    test('authenticated non-privileged user cannot create a tag', function () {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)
+            ->postJson('/api/tags', [
+                'name' => 'Forbidden',
+                'slug' => 'forbidden',
+            ]);
+
+        $response->assertForbidden();
+    });
+
     test('validation errors returned for missing fields', function () {
         $user = User::factory()->create();
         $user->assignRole('admin');
@@ -92,6 +104,19 @@ describe('PUT /api/tags/{tag}', function () {
 
         expect($tag->fresh()->name)->toBe('New');
     });
+
+    test('authenticated non-privileged user cannot update a tag', function () {
+        $user = User::factory()->create();
+        $tag = Tag::factory()->create(['name' => 'Old', 'slug' => 'old']);
+
+        $response = $this->actingAs($user)
+            ->putJson("/api/tags/{$tag->id}", [
+                'name' => 'New',
+                'slug' => 'new',
+            ]);
+
+        $response->assertForbidden();
+    });
 });
 
 describe('DELETE /api/tags/{tag}', function () {
@@ -107,5 +132,16 @@ describe('DELETE /api/tags/{tag}', function () {
             ->assertJson(['message' => 'Tag supprimé avec succès']);
 
         $this->assertDatabaseMissing('tags', ['id' => $tag->id]);
+    });
+
+    test('authenticated non-privileged user cannot delete a tag', function () {
+        $user = User::factory()->create();
+        $tag = Tag::factory()->create();
+
+        $response = $this->actingAs($user)
+            ->deleteJson("/api/tags/{$tag->id}");
+
+        $response->assertForbidden();
+        $this->assertDatabaseHas('tags', ['id' => $tag->id]);
     });
 });

@@ -63,6 +63,18 @@ describe('POST /api/categories', function () {
         $response->assertUnauthorized();
     });
 
+    test('authenticated non-privileged user cannot create a category', function () {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)
+            ->postJson('/api/categories', [
+                'name' => 'Forbidden',
+                'slug' => 'forbidden',
+            ]);
+
+        $response->assertForbidden();
+    });
+
     test('validation errors returned for missing fields', function () {
         $user = User::factory()->create();
         $user->assignRole('admin');
@@ -92,6 +104,19 @@ describe('PUT /api/categories/{category}', function () {
 
         expect($category->fresh()->name)->toBe('New');
     });
+
+    test('authenticated non-privileged user cannot update a category', function () {
+        $user = User::factory()->create();
+        $category = Category::factory()->create(['name' => 'Old', 'slug' => 'old']);
+
+        $response = $this->actingAs($user)
+            ->putJson("/api/categories/{$category->id}", [
+                'name' => 'New',
+                'slug' => 'new',
+            ]);
+
+        $response->assertForbidden();
+    });
 });
 
 describe('DELETE /api/categories/{category}', function () {
@@ -107,5 +132,16 @@ describe('DELETE /api/categories/{category}', function () {
             ->assertJson(['message' => 'Catégorie supprimée avec succès']);
 
         $this->assertDatabaseMissing('categories', ['id' => $category->id]);
+    });
+
+    test('authenticated non-privileged user cannot delete a category', function () {
+        $user = User::factory()->create();
+        $category = Category::factory()->create();
+
+        $response = $this->actingAs($user)
+            ->deleteJson("/api/categories/{$category->id}");
+
+        $response->assertForbidden();
+        $this->assertDatabaseHas('categories', ['id' => $category->id]);
     });
 });

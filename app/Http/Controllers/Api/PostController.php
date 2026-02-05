@@ -43,9 +43,9 @@ class PostController extends Controller
 
     public function store(StorePostRequest $request): JsonResponse
     {
-        try {
-            $this->authorize('create', Post::class);
+        $this->authorize('create', Post::class);
 
+        try {
             $validatedData = $request->validated();
 
             $data = CreatePostData::from($validatedData);
