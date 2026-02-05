@@ -40,6 +40,7 @@ describe('GET /api/categories', function () {
 describe('POST /api/categories', function () {
     test('authenticated user can create a category', function () {
         $user = User::factory()->create();
+        $user->assignRole('admin');
 
         $response = $this->actingAs($user)
             ->postJson('/api/categories', [
@@ -64,6 +65,7 @@ describe('POST /api/categories', function () {
 
     test('validation errors returned for missing fields', function () {
         $user = User::factory()->create();
+        $user->assignRole('admin');
 
         $response = $this->actingAs($user)
             ->postJson('/api/categories', []);
@@ -76,6 +78,7 @@ describe('POST /api/categories', function () {
 describe('PUT /api/categories/{category}', function () {
     test('authenticated user can update a category', function () {
         $user = User::factory()->create();
+        $user->assignRole('admin');
         $category = Category::factory()->create(['name' => 'Old', 'slug' => 'old']);
 
         $response = $this->actingAs($user)
@@ -94,6 +97,7 @@ describe('PUT /api/categories/{category}', function () {
 describe('DELETE /api/categories/{category}', function () {
     test('authenticated user can delete a category', function () {
         $user = User::factory()->create();
+        $user->assignRole('admin');
         $category = Category::factory()->create();
 
         $response = $this->actingAs($user)

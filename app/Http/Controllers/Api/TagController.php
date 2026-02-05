@@ -80,6 +80,12 @@ class TagController extends Controller
     public function destroy(Tag $tag): JsonResponse
     {
         try {
+            $user = auth()->user();
+
+            if (! $user || (! $user->isSuperAdmin() && ! $user->isAdmin() && ! ($user->isAgent() && $user->can('edit tags')))) {
+                return response()->json(['message' => 'Non autorisé'], 403);
+            }
+
             $this->tagService->deleteTag($tag);
 
             return response()->json(['message' => 'Tag supprimé avec succès'], 200);

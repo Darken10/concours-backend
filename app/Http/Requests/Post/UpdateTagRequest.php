@@ -11,7 +11,21 @@ class UpdateTagRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return auth()->check();
+        $user = auth()->user();
+
+        if (! $user) {
+            return false;
+        }
+
+        if ($user->isSuperAdmin() || $user->isAdmin()) {
+            return true;
+        }
+
+        if ($user->isAgent() && $user->can('edit tags')) {
+            return true;
+        }
+
+        return false;
     }
 
     /**

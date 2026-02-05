@@ -80,6 +80,12 @@ class CategoryController extends Controller
     public function destroy(Category $category): JsonResponse
     {
         try {
+            $user = auth()->user();
+
+            if (! $user || (! $user->isSuperAdmin() && ! $user->isAdmin() && ! ($user->isAgent() && $user->can('edit categories')))) {
+                return response()->json(['message' => 'Non autorisé'], 403);
+            }
+
             $this->categoryService->deleteCategory($category);
 
             return response()->json(['message' => 'Catégorie supprimée avec succès'], 200);

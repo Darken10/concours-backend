@@ -40,6 +40,7 @@ describe('GET /api/tags', function () {
 describe('POST /api/tags', function () {
     test('authenticated user can create a tag', function () {
         $user = User::factory()->create();
+        $user->assignRole('admin');
 
         $response = $this->actingAs($user)
             ->postJson('/api/tags', [
@@ -64,6 +65,7 @@ describe('POST /api/tags', function () {
 
     test('validation errors returned for missing fields', function () {
         $user = User::factory()->create();
+        $user->assignRole('admin');
 
         $response = $this->actingAs($user)
             ->postJson('/api/tags', []);
@@ -76,6 +78,7 @@ describe('POST /api/tags', function () {
 describe('PUT /api/tags/{tag}', function () {
     test('authenticated user can update a tag', function () {
         $user = User::factory()->create();
+        $user->assignRole('admin');
         $tag = Tag::factory()->create(['name' => 'Old', 'slug' => 'old']);
 
         $response = $this->actingAs($user)
@@ -94,6 +97,7 @@ describe('PUT /api/tags/{tag}', function () {
 describe('DELETE /api/tags/{tag}', function () {
     test('authenticated user can delete a tag', function () {
         $user = User::factory()->create();
+        $user->assignRole('admin');
         $tag = Tag::factory()->create();
 
         $response = $this->actingAs($user)
