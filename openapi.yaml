@@ -91,8 +91,6 @@ components:
           format: uuid
           nullable: true
           description: ID de l'organisation
-              name:
-                type: string
         created_at:
           type: string
           format: date-time
@@ -197,6 +195,141 @@ components:
           type: integer
         last_page:
           type: integer
+
+    Post:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Identifiant unique du post
+        title:
+          type: string
+          description: Titre du post
+        content:
+          type: string
+          description: Contenu du post
+        slug:
+          type: string
+          description: Slug du post
+        user_id:
+          type: string
+          format: uuid
+          description: ID de l'utilisateur créateur
+        user:
+          $ref: '#/components/schemas/UserCreator'
+        images:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                format: uuid
+              url:
+                type: string
+                format: uri
+              name:
+                type: string
+          description: Images du post
+        attachments:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                format: uuid
+              url:
+                type: string
+                format: uri
+              name:
+                type: string
+              mime_type:
+                type: string
+          description: Fichiers joints au post
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/Category'
+          description: Catégories du post
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tag'
+          description: Tags du post
+        likes_count:
+          type: integer
+          description: Nombre de likes
+        comments_count:
+          type: integer
+          description: Nombre de commentaires
+        is_liked:
+          type: boolean
+          description: Indique si l'utilisateur connecté a liké ce post
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    Comment:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Identifiant unique du commentaire
+        content:
+          type: string
+          description: Contenu du commentaire
+        user_id:
+          type: string
+          format: uuid
+          description: ID de l'utilisateur
+        user:
+          $ref: '#/components/schemas/UserCreator'
+        post_id:
+          type: string
+          format: uuid
+          description: ID du post
+        parent_id:
+          type: string
+          format: uuid
+          nullable: true
+          description: ID du commentaire parent (pour les réponses)
+        attachments:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                format: uuid
+              url:
+                type: string
+                format: uri
+              name:
+                type: string
+              mime_type:
+                type: string
+          description: Fichiers joints au commentaire
+        likes_count:
+          type: integer
+          description: Nombre de likes
+        replies_count:
+          type: integer
+          description: Nombre de réponses
+        is_liked:
+          type: boolean
+          description: Indique si l'utilisateur connecté a liké ce commentaire
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
 
 paths:
   # ============================================
