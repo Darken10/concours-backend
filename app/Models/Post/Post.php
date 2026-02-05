@@ -29,7 +29,23 @@ class Post extends Model implements HasMedia
         'updated_at' => 'datetime',
     ];
 
-    protected $appends = [];
+    protected $appends = [
+        'likes_count',
+        'comments_count',
+        'shares_count',
+    ];
+
+    public function getLikesCountAttribute()    {
+        return $this->likes()->count();
+    }
+
+    public function getCommentsCountAttribute()    {
+        return $this->comments()->count();
+    }
+
+    public function getSharesCountAttribute()    {
+        return $this->likes()->where('is_share', true)->count();
+    }
 
     public function user()
     {
