@@ -26,10 +26,7 @@ class StorePostRequest extends FormRequest
             'content' => ['required', 'string', 'min:10', 'max:10000'],
             'images' => ['nullable', 'array'],
             'images.*' => ['nullable', 'file', 'mimes:jpeg,png,gif,webp', 'max:5120'],
-            'attachments' => ['nullable', 'array'],
-            'attachments.*' => ['nullable', 'file', 'mimes:pdf,doc,docx', 'max:10240'],
-            'category_ids' => ['nullable', 'array'],
-            'category_ids.*' => ['uuid', 'exists:categories,id'],
+            'category_id' => ['nullable','uuid', 'exists:categories,id'],
             'tag_ids' => ['nullable', 'array'],
             'tag_ids.*' => ['uuid', 'exists:tags,id'],
         ];
@@ -47,8 +44,10 @@ class StorePostRequest extends FormRequest
             'content.min' => 'Le contenu doit contenir au moins 10 caractères',
             'images.*.mimes' => 'Les images doivent être en format JPEG, PNG, GIF ou WEBP',
             'images.*.max' => 'Les images ne doivent pas dépasser 5 Mo',
-            'attachments.*.mimes' => 'Les pièces jointes doivent être en format PDF, DOC ou DOCX',
-            'attachments.*.max' => 'Les pièces jointes ne doivent pas dépasser 10 Mo',
-        ];
+            'category_id.uuid' => 'L\'ID de catégorie doit être un UUID valide',
+            'category_id.exists' => 'La catégorie spécifiée n\'existe pas',
+            'tag_ids.*.uuid' => 'Chaque ID de tag doit être un UUID valide',
+            'tag_ids.*.exists' => 'Chaque tag spécifié doit exister',
+            ];
     }
 }
