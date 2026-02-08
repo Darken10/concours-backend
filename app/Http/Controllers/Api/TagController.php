@@ -2,16 +2,18 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Data\Blog\CreateTagData;
-use App\Data\Blog\UpdateTagData;
-use App\Http\Controllers\Controller;
-use App\Http\Requests\Post\StoreTagRequest;
-use App\Http\Requests\Post\UpdateTagRequest;
-use App\Http\Resources\TagResource;
 use App\Models\Post\Tag;
 use App\Services\TagService;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use App\Data\Blog\CreateTagData;
+use App\Data\Blog\UpdateTagData;
+use Illuminate\Http\JsonResponse;
+use App\Http\Resources\TagResource;
+use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\Post\StoreTagRequest;
+use App\Http\Requests\Post\UpdateTagRequest;
 
 class TagController extends Controller
 {
@@ -48,7 +50,7 @@ class TagController extends Controller
 
             return response()->json(new TagResource($tag), 201);
         } catch (\Exception $e) {
-            \Log::error('Error creating tag: '.$e->getMessage());
+            Log::error('Error creating tag: '.$e->getMessage());
 
             return response()->json([
                 'message' => 'Erreur lors de la création du tag',
@@ -69,7 +71,7 @@ class TagController extends Controller
 
             return response()->json(new TagResource($tag));
         } catch (\Exception $e) {
-            \Log::error('Error updating tag: '.$e->getMessage());
+            Log::error('Error updating tag: '.$e->getMessage());
 
             return response()->json([
                 'message' => 'Erreur lors de la mise à jour du tag',
@@ -80,7 +82,7 @@ class TagController extends Controller
     public function destroy(Tag $tag): JsonResponse
     {
         try {
-            $user = auth()->user();
+            $user = Auth::user();
 
             if (! $user || (! $user->isSuperAdmin() && ! $user->isAdmin() && ! ($user->isAgent() && $user->can('edit tags')))) {
                 return response()->json(['message' => 'Non autorisé'], 403);
@@ -90,7 +92,7 @@ class TagController extends Controller
 
             return response()->json(['message' => 'Tag supprimé avec succès'], 200);
         } catch (\Exception $e) {
-            \Log::error('Error deleting tag: '.$e->getMessage());
+            Log::error('Error deleting tag: '.$e->getMessage());
 
             return response()->json([
                 'message' => 'Erreur lors de la suppression du tag',

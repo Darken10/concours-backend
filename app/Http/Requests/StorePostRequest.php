@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class StorePostRequest extends FormRequest
 {
@@ -11,7 +12,7 @@ class StorePostRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return auth()->check();
+        return Auth::check();
     }
 
     /**
@@ -26,7 +27,7 @@ class StorePostRequest extends FormRequest
             'content' => ['required', 'string', 'min:10', 'max:10000'],
             'images' => ['nullable', 'array'],
             'images.*' => ['nullable', 'file', 'mimes:jpeg,png,gif,webp', 'max:5120'],
-            'category_id' => ['nullable','uuid', 'exists:categories,id'],
+            'category_id' => ['nullable', 'uuid', 'exists:categories,id'],
             'tag_ids' => ['nullable', 'array'],
             'tag_ids.*' => ['uuid', 'exists:tags,id'],
         ];
@@ -48,6 +49,6 @@ class StorePostRequest extends FormRequest
             'category_id.exists' => 'La catégorie spécifiée n\'existe pas',
             'tag_ids.*.uuid' => 'Chaque ID de tag doit être un UUID valide',
             'tag_ids.*.exists' => 'Chaque tag spécifié doit exister',
-            ];
+        ];
     }
 }
