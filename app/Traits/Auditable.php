@@ -39,26 +39,16 @@ trait Auditable
         });
 
         static::deleting(function (Model $model) {
-            if (!$model->isForceDeleting()) {
+            // Check if model uses SoftDeletes and is being force deleted
+            $isForceDeleting = method_exists($model, 'isForceDeleting') && $model->isForceDeleting();
+
+            if (!$isForceDeleting) {
                 app(AuditService::class)->logDeleted(
                     $model,
                     $model->getAttributes()
                 );
             }
         });
-
-        static::forceDeleted(function (Model $model) {
-            app(AuditService::class)->logForceDeleted(
-                $model,
-                $model->getAttributes()
-            );
-        });
-
-        if (method_exists(Model::class, 'restored')) {
-            static::restored(function (Model $model) {
-                app(AuditService::class)->logRestored($model);
-            });
-        }
     }
 
     public function audits()

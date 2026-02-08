@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('ip_address')->nullable(); // Client IP
             $table->string('user_agent')->nullable(); // Browser user agent
             $table->timestamps();
-            
+
             $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
             $table->index(['model_type', 'model_id']);
             $table->index(['user_id', 'created_at']);

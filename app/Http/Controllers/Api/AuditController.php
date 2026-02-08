@@ -15,7 +15,6 @@ class AuditController extends Controller
     public function __construct(AuditService $auditService)
     {
         $this->auditService = $auditService;
-        $this->middleware('auth:sanctum');
     }
 
     public function index(Request $request): JsonResponse
@@ -58,8 +57,6 @@ class AuditController extends Controller
 
     public function userAudits(Request $request, $userId): JsonResponse
     {
-        $this->authorize('viewAny', Audit::class);
-
         $request->validate([
             'per_page' => 'integer|min:1|max:100',
         ]);
@@ -107,8 +104,6 @@ class AuditController extends Controller
 
     public function stats(Request $request): JsonResponse
     {
-        $this->authorize('viewAny', Audit::class);
-
         $stats = [
             'total_audits' => Audit::count(),
             'audits_this_month' => Audit::whereMonth('created_at', now()->month)

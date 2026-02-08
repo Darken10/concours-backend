@@ -3,6 +3,7 @@
 namespace App\Models\Post;
 
 use App\Models\User;
+use App\Traits\Auditable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -12,7 +13,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 class Post extends Model implements HasMedia
 {
     /** @use HasFactory<\Database\Factories\Post\PostFactory> */
-    use HasFactory, HasUuids, InteractsWithMedia;
+    use HasFactory, HasUuids, InteractsWithMedia, Auditable;
 
     protected $keyType = 'string';
 
