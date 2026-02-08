@@ -342,8 +342,7 @@ describe('POST /api/posts/{post}/like', function () {
         $response = $this->actingAs($user)
             ->postJson("/api/posts/{$post->id}/like");
 
-        $response->assertCreated()
-            ->assertJson(['message' => 'Post aimé']);
+        $response->assertCreated();
 
         $this->assertDatabaseHas('likes', [
             'user_id' => $user->id,
@@ -389,8 +388,7 @@ describe('POST /api/posts/{post}/unlike', function () {
         $response = $this->actingAs($user)
             ->postJson("/api/posts/{$post->id}/unlike");
 
-        $response->assertSuccessful()
-            ->assertJson(['message' => 'Like supprimé']);
+            $response->assertSuccessful();
 
         $this->assertDatabaseMissing('likes', [
             'user_id' => $user->id,

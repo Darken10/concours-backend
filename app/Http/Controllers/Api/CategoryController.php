@@ -2,16 +2,18 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Data\Blog\CreateCategoryData;
-use App\Data\Blog\UpdateCategoryData;
-use App\Http\Controllers\Controller;
-use App\Http\Requests\Post\StoreCategoryRequest;
-use App\Http\Requests\Post\UpdateCategoryRequest;
-use App\Http\Resources\CategoryResource;
+use Illuminate\Http\Request;
 use App\Models\Post\Category;
 use App\Services\CategoryService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
+use App\Data\Blog\CreateCategoryData;
+use App\Data\Blog\UpdateCategoryData;
+use App\Http\Resources\CategoryResource;
+use App\Http\Requests\Post\StoreCategoryRequest;
+use App\Http\Requests\Post\UpdateCategoryRequest;
+use Illuminate\Support\Facades\Auth;
 
 class CategoryController extends Controller
 {
@@ -48,7 +50,7 @@ class CategoryController extends Controller
 
             return response()->json(new CategoryResource($category), 201);
         } catch (\Exception $e) {
-            \Log::error('Error creating category: '.$e->getMessage());
+            Log::error('Error creating category: '.$e->getMessage());
 
             return response()->json([
                 'message' => 'Erreur lors de la création de la catégorie',
@@ -69,7 +71,7 @@ class CategoryController extends Controller
 
             return response()->json(new CategoryResource($category));
         } catch (\Exception $e) {
-            \Log::error('Error updating category: '.$e->getMessage());
+            Log::error('Error updating category: '.$e->getMessage());
 
             return response()->json([
                 'message' => 'Erreur lors de la mise à jour de la catégorie',
@@ -80,7 +82,7 @@ class CategoryController extends Controller
     public function destroy(Category $category): JsonResponse
     {
         try {
-            $user = auth()->user();
+            $user = Auth::user();
 
             if (! $user || (! $user->isSuperAdmin() && ! $user->isAdmin() && ! ($user->isAgent() && $user->can('edit categories')))) {
                 return response()->json(['message' => 'Non autorisé'], 403);
@@ -90,7 +92,7 @@ class CategoryController extends Controller
 
             return response()->json(['message' => 'Catégorie supprimée avec succès'], 200);
         } catch (\Exception $e) {
-            \Log::error('Error deleting category: '.$e->getMessage());
+            Log::error('Error deleting category: '.$e->getMessage());
 
             return response()->json([
                 'message' => 'Erreur lors de la suppression de la catégorie',

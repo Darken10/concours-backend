@@ -13,6 +13,8 @@ use App\Services\PostService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class PostController extends Controller
 {
@@ -50,11 +52,11 @@ class PostController extends Controller
 
             $data = CreatePostData::from($validatedData);
 
-            $post = $this->postService->createPost(auth()->user(), $data);
+            $post = $this->postService->createPost(Auth::user(), $data);
 
             return response()->json(new PostResource($post), 201);
         } catch (\Exception $e) {
-            \Log::error('Error creating post: '.$e->getMessage(), [
+            Log::error('Error creating post: '.$e->getMessage(), [
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),
                 'trace' => $e->getTraceAsString(),
@@ -96,7 +98,7 @@ class PostController extends Controller
     public function userPosts(Request $request): JsonResponse
     {
         $perPage = $request->query('per_page', 15);
-        $posts = $this->postService->getPostsByUser(auth()->user(), $perPage);
+        $posts = $this->postService->getPostsByUser(Auth::user(), $perPage);
 
         return response()->json([
             'data' => PostResource::collection($posts),
@@ -111,14 +113,14 @@ class PostController extends Controller
 
     public function like(Post $post): JsonResponse
     {
-        $this->postService->likePost($post, auth()->user());
+        $this->postService->likePost($post, Auth::user());
 
         return response()->json(new PostResource($post->load('user', 'categories', 'tags', 'comments', 'likes')), 201);
     }
 
     public function unlike(Post $post): JsonResponse
     {
-        $this->postService->unlikePost($post, auth()->user());
+        $this->postService->unlikePost($post, Auth::user());
 
         return response()->json(new PostResource($post->load('user', 'categories', 'tags', 'comments', 'likes')), 200);
     }

@@ -2,18 +2,19 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\Post\Post;
+use App\Models\Post\Comment;
+use Illuminate\Http\Request;
+use App\Services\CommentService;
+use Illuminate\Http\JsonResponse;
 use App\Data\Blog\CreateCommentData;
 use App\Data\Blog\UpdateCommentData;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Resources\CommentResource;
 use App\Http\Requests\StoreCommentRequest;
 use App\Http\Requests\UpdateCommentRequest;
-use App\Http\Resources\CommentResource;
-use App\Models\Post\Comment;
-use App\Models\Post\Post;
-use App\Services\CommentService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class CommentController extends Controller
 {
@@ -29,7 +30,7 @@ class CommentController extends Controller
     public function store(StoreCommentRequest $request, Post $post): JsonResponse
     {
         $data = CreateCommentData::from($request->validated());
-        $comment = $this->commentService->createComment($post, auth()->user(), $data);
+        $comment = $this->commentService->createComment($post, Auth::user(), $data);
 
         return response()->json(new CommentResource($comment), 201);
     }
@@ -87,14 +88,14 @@ class CommentController extends Controller
 
     public function like(Comment $comment): JsonResponse
     {
-        $like = $this->commentService->likeComment($comment, auth()->user());
+        $like = $this->commentService->likeComment($comment, Auth::user());
 
         return response()->json(['message' => 'Commentaire aimé'], 201);
     }
 
     public function unlike(Comment $comment): JsonResponse
     {
-        $this->commentService->unlikeComment($comment, auth()->user());
+        $this->commentService->unlikeComment($comment, Auth::user());
 
         return response()->json(['message' => 'Like supprimé'], 200);
     }
