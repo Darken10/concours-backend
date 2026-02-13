@@ -127,4 +127,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(\App\Models\Post\Like::class);
     }
+
+    public function organization()
+    {
+        return $this->belongsTo(Organization::class);
+    }
 }
