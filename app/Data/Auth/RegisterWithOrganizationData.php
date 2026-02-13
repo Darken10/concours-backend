@@ -56,13 +56,17 @@ class RegisterWithOrganizationData extends Data
             throw new \InvalidArgumentException('password is required');
         }
 
+        if (! isset($data['gender'])) {
+            throw new \InvalidArgumentException('gender is required');
+        }
+
         return new self(
             email: (string) $data['email'],
             password: (string) $data['password'],
             avatar: $data['avatar'] ?? null,
             firstname: $data['firstname'] ?? '',
             lastname: $data['lastname'] ?? '',
-            gender: array_key_exists('gender', $data) && $data['gender'] !== null ? UserGenderEnum::tryFrom($data['gender']) : null,
+            gender: UserGenderEnum::from($data['gender']),
             date_of_birth: $data['date_of_birth'] ?? null,
             phone: $data['phone'] ?? null,
             is_organization: (bool) ($data['is_organization'] ?? false),
