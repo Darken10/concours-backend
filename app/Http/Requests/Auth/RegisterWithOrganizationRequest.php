@@ -43,10 +43,10 @@ class RegisterWithOrganizationRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'email.required' => 'L'adresse email est obligatoire.',
-            'email.email' => 'L'adresse email doit être valide.',
+            'email.required' => 'L\'adresse email est obligatoire.',
+            'email.email' => 'L\'adresse email doit être valide.',
             'email.unique' => 'Cette adresse email est déjà utilisée.',
-            'email.max' => 'L'adresse email ne doit pas dépasser 255 caractères.',
+            'email.max' => 'L\'adresse email ne doit pas dépasser 255 caractères.',
 
             'password.required' => 'Le mot de passe est obligatoire.',
             'password.min' => 'Le mot de passe doit contenir au moins 8 caractères.',
@@ -55,10 +55,10 @@ class RegisterWithOrganizationRequest extends FormRequest
             'provider.string' => 'Le provider doit être une chaîne de caractères.',
             'provider.max' => 'Le provider ne doit pas dépasser 50 caractères.',
 
-            'provider_id.string' => 'L'identifiant du provider doit être une chaîne.',
-            'provider_id.max' => 'L'identifiant du provider est trop long.',
+            'provider_id.string' => 'L\'identifiant du provider doit être une chaîne.',
+            'provider_id.max' => 'L\'identifiant du provider est trop long.',
 
-            'avatar.url' => 'L'avatar doit être une URL valide.',
+            'avatar.url' => 'L\'avatar doit être une URL valide.',
 
             'firstname.required' => 'Le prénom est obligatoire.',
             'firstname.string' => 'Le prénom doit être une chaîne de caractères.',
@@ -79,13 +79,13 @@ class RegisterWithOrganizationRequest extends FormRequest
             'is_organization.required' => 'Le champ organisation est obligatoire.',
             'is_organization.boolean' => 'Le champ organisation doit être vrai ou faux.',
 
-            'organization_name.required_if' => 'Le nom de l'organisation est obligatoire.',
-            'organization_name.string' => 'Le nom de l'organisation doit être une chaîne de caractères.',
-            'organization_name.max' => 'Le nom de l'organisation ne doit pas dépasser 255 caractères.',
-            'organization_name.unique' => 'Ce nom d'organisation est déjà utilisé.',
+            'organization_name.required_if' => 'Le nom de l\'organisation est obligatoire.',
+            'organization_name.string' => 'Le nom de l\'organisation doit être une chaîne de caractères.',
+            'organization_name.max' => 'Le nom de l\'organisation ne doit pas dépasser 255 caractères.',
+            'organization_name.unique' => 'Ce nom d\'organisation est déjà utilisé.',
 
-            'organization_description.required_if' => 'La description de l'organisation est obligatoire.',
-            'organization_description.string' => 'La description de l'organisation doit être une chaîne de caractères.',
+            'organization_description.required_if' => 'La description de l\'organisation est obligatoire.',
+            'organization_description.string' => 'La description de l\'organisation doit être une chaîne de caractères.',
         ];
     }
 }
