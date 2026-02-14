@@ -4,7 +4,9 @@ namespace App\Services;
 
 use App\Data\Auth\CreateUserData;
 use App\Data\Auth\LoginUserData;
+use App\Data\Auth\RegisterWithOrganizationData;
 use App\Enums\UserStatusEnum;
+use App\Models\Organization;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -39,6 +41,55 @@ class AuthService
                 'token' => $token,
             ];
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    public function registerUserWithOrganization(RegisterWithOrganizationData $data): array
+    {
+        try {
+            DB::beginTransaction();
+            
+            $organization = null;
+            
+            // Create organization if is_organization is true
+            if ($data->is_organization) {
+                $organization = Organization::create([
+                    'name' => $data->organization_name,
+                    'description' => $data->organization_description,
+                ]);
+            }
+            
+            $user = User::create([
+                'email' => $data->email,
+                'password' => Hash::make($data->password),
+                'avatar' => $data->avatar,
+                'firstname' => $data->firstname,
+                'lastname' => $data->lastname,
+                'gender' => $data->gender,
+                'date_of_birth' => $data->date_of_birth,
+                'phone' => $data->phone,
+                'status' => UserStatusEnum::ACTIVE->value,
+                'organization_id' => $organization?->id,
+            ]);
+
+            // Assign role based on organization status
+            if ($data->is_organization) {
+                $user->assignRole('admin');
+            } else {
+                $user->assignRole('user');
+            }
+
+            $token = $user->createToken('auth_token')->plainTextToken;
+            DB::commit();
+
+            return [
+                'user' => $user->load('organization'),
+                'token' => $token,
+                'organization' => $organization,
+            ];
+        } catch (\Exception $e) {
             DB::rollBack();
             throw $e;
         }

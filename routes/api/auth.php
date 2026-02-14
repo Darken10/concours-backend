@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\OrganizationController;
 
 Route::prefix('auth')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/register-with-organization', [AuthController::class, 'registerWithOrganization']);
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/social/{provider}', [SocialAuthController::class, 'handleProvider']);
 

@@ -42,6 +42,7 @@ class User extends Authenticatable
         'date_of_birth',
         'phone',
         'status',
+        'organization_id',
 
     ];
 
@@ -126,5 +127,10 @@ class User extends Authenticatable
     public function likes()
     {
         return $this->hasMany(\App\Models\Post\Like::class);
+    }
+
+    public function organization()
+    {
+        return $this->belongsTo(Organization::class);
     }
 }
