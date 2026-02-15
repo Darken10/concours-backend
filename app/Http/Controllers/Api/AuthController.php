@@ -4,9 +4,12 @@ namespace App\Http\Controllers\Api;
 
 use App\Data\Auth\CreateUserData;
 use App\Data\Auth\LoginUserData;
+use App\Data\Auth\RegisterWithOrganizationData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginUserRequest;
 use App\Http\Requests\Auth\RegisterUserRequest;
+use App\Http\Requests\Auth\RegisterWithOrganizationRequest;
+use App\Http\Resources\OrganizationResource;
 use App\Http\Resources\UserResource;
 use App\Services\AuthService;
 use Illuminate\Http\JsonResponse;
@@ -30,6 +33,20 @@ class AuthController extends Controller
 
         return response()->json([
             'user' => new UserResource($result['user']),
+            'token' => $result['token'],
+            'message' => 'User registered successfully',
+        ], 201);
+    }
+
+    public function registerWithOrganization(RegisterWithOrganizationRequest $request): JsonResponse
+    {
+        $data = $request->validated();
+
+        $result = $this->authService->registerUserWithOrganization(RegisterWithOrganizationData::fromArray($data));
+
+        return response()->json([
+            'user' => new UserResource($result['user']),
+            'organization' => $result['organization'] ? new OrganizationResource($result['organization']) : null,
             'token' => $result['token'],
             'message' => 'User registered successfully',
         ], 201);
