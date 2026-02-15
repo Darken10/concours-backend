@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Data\Auth\CreateUserData;
 use App\Data\Auth\LoginUserData;
 use App\Data\Auth\RegisterWithOrganizationData;
+use App\Enums\UserRoleEnum;
 use App\Enums\UserStatusEnum;
 use App\Models\Organization;
 use App\Models\User;
@@ -13,9 +14,29 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
+use Spatie\Permission\Models\Role;
 
 class AuthService
 {
+    /**
+     * Ensure roles exist before assigning them
+     */
+    private function ensureRolesExist(): void
+    {
+        foreach (UserRoleEnum::cases() as $role) {
+            Role::firstOrCreate(['name' => $role->value, 'guard_name' => 'web']);
+        }
+    }
+
+    /**
+     * Assign role safely
+     */
+    private function assignRoleSafely(User $user, string $roleName): void
+    {
+        $this->ensureRolesExist();
+        $user->assignRole($roleName);
+    }
+
     public function registerUser(CreateUserData $data): array
     {
         try {
@@ -38,7 +59,7 @@ class AuthService
                 'email_verification_code_expires_at' => now()->addMinutes(15),
             ]);
 
-            $user->assignRole('user');
+            $this->assignRoleSafely($user, 'user');
 
             // Send verification code via email
             $user->notify(new EmailVerificationCode($verificationCode));
@@ -91,9 +112,9 @@ class AuthService
 
             // Assign role based on organization status
             if ($data->is_organization) {
-                $user->assignRole('admin');
+                $this->assignRoleSafely($user, 'admin');
             } else {
-                $user->assignRole('user');
+                $this->assignRoleSafely($user, 'user');
             }
 
             // Send verification code via email
@@ -178,7 +199,7 @@ class AuthService
                     'avatar' => $socialUser->getAvatar(),
                 ]);
 
-                $user->assignRole('user');
+                $this->assignRoleSafely($user, 'user');
             }
         }
 
