@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Notifications\EmailVerificationCode;
+use App\Http\Resources\UserResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -59,7 +60,7 @@ class EmailVerificationController extends Controller
 
         return response()->json([
             'message' => 'Email vérifié avec succès',
-            'user' => $user,
+            'user' => new UserResource($user),
         ], 200);
     }
 
