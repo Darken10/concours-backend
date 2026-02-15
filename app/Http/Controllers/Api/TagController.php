@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\Post\Tag;
-use App\Services\TagService;
-use Illuminate\Http\Request;
 use App\Data\Blog\CreateTagData;
 use App\Data\Blog\UpdateTagData;
-use Illuminate\Http\JsonResponse;
-use App\Http\Resources\TagResource;
-use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\Post\StoreTagRequest;
 use App\Http\Requests\Post\UpdateTagRequest;
+use App\Http\Resources\TagResource;
+use App\Models\Post\Tag;
+use App\Services\TagService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class TagController extends Controller
 {

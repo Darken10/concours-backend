@@ -43,6 +43,8 @@ class User extends Authenticatable
         'phone',
         'status',
         'organization_id',
+        'email_verification_code',
+        'email_verification_code_expires_at',
 
     ];
 
@@ -56,6 +58,8 @@ class User extends Authenticatable
         'two_factor_secret',
         'two_factor_recovery_codes',
         'remember_token',
+        'email_verification_code',
+        'email_verification_code_expires_at',
     ];
 
     protected $append = [
@@ -71,6 +75,7 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'email_verification_code_expires_at' => 'datetime',
             'password' => 'hashed',
             'status' => UserStatusEnum::class,
             'gender' => UserGenderEnum::class,

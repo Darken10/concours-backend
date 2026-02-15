@@ -388,7 +388,7 @@ describe('POST /api/posts/{post}/unlike', function () {
         $response = $this->actingAs($user)
             ->postJson("/api/posts/{$post->id}/unlike");
 
-            $response->assertSuccessful();
+        $response->assertSuccessful();
 
         $this->assertDatabaseMissing('likes', [
             'user_id' => $user->id,

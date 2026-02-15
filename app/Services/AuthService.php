@@ -8,6 +8,7 @@ use App\Data\Auth\RegisterWithOrganizationData;
 use App\Enums\UserStatusEnum;
 use App\Models\Organization;
 use App\Models\User;
+use App\Notifications\EmailVerificationCode;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -19,6 +20,10 @@ class AuthService
     {
         try {
             DB::beginTransaction();
+
+            // Generate a 6-digit verification code
+            $verificationCode = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+
             $user = User::create([
                 'email' => $data->email,
                 'password' => Hash::make($data->password),
@@ -29,9 +34,14 @@ class AuthService
                 'date_of_birth' => $data->date_of_birth,
                 'phone' => $data->phone,
                 'status' => UserStatusEnum::ACTIVE->value,
+                'email_verification_code' => $verificationCode,
+                'email_verification_code_expires_at' => now()->addMinutes(15),
             ]);
 
             $user->assignRole('user');
+
+            // Send verification code via email
+            $user->notify(new EmailVerificationCode($verificationCode));
 
             $token = $user->createToken('auth_token')->plainTextToken;
             DB::commit();
@@ -50,9 +60,12 @@ class AuthService
     {
         try {
             DB::beginTransaction();
-            
+
             $organization = null;
-            
+
+            // Generate a 6-digit verification code
+            $verificationCode = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+
             // Create organization if is_organization is true
             if ($data->is_organization) {
                 $organization = Organization::create([
@@ -60,7 +73,7 @@ class AuthService
                     'description' => $data->organization_description,
                 ]);
             }
-            
+
             $user = User::create([
                 'email' => $data->email,
                 'password' => Hash::make($data->password),
@@ -72,6 +85,8 @@ class AuthService
                 'phone' => $data->phone,
                 'status' => UserStatusEnum::ACTIVE->value,
                 'organization_id' => $organization?->id,
+                'email_verification_code' => $verificationCode,
+                'email_verification_code_expires_at' => now()->addMinutes(15),
             ]);
 
             // Assign role based on organization status
@@ -80,6 +95,9 @@ class AuthService
             } else {
                 $user->assignRole('user');
             }
+
+            // Send verification code via email
+            $user->notify(new EmailVerificationCode($verificationCode));
 
             $token = $user->createToken('auth_token')->plainTextToken;
             DB::commit();

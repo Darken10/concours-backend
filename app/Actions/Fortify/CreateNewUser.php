@@ -3,6 +3,7 @@
 namespace App\Actions\Fortify;
 
 use App\Models\User;
+use App\Notifications\EmailVerificationCode;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
@@ -35,11 +36,21 @@ class CreateNewUser implements CreatesNewUsers
         $firstname = $nameParts[0];
         $lastname = $nameParts[1] ?? '';
 
-        return User::create([
+        // Generate a 6-digit verification code
+        $verificationCode = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+
+        $user = User::create([
             'firstname' => $firstname,
             'lastname' => $lastname,
             'email' => $input['email'],
             'password' => $input['password'],
+            'email_verification_code' => $verificationCode,
+            'email_verification_code_expires_at' => now()->addMinutes(15),
         ]);
+
+        // Send verification code via email
+        $user->notify(new EmailVerificationCode($verificationCode));
+
+        return $user;
     }
 }

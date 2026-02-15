@@ -30,7 +30,7 @@ trait Auditable
                 $model->originalAttributes
             );
 
-            if (!empty($changes)) {
+            if (! empty($changes)) {
                 app(AuditService::class)->logUpdated(
                     $model,
                     $model->originalAttributes
@@ -42,7 +42,7 @@ trait Auditable
             // Check if model uses SoftDeletes and is being force deleted
             $isForceDeleting = method_exists($model, 'isForceDeleting') && $model->isForceDeleting();
 
-            if (!$isForceDeleting) {
+            if (! $isForceDeleting) {
                 app(AuditService::class)->logDeleted(
                     $model,
                     $model->getAttributes()

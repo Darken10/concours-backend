@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers\Api;
 
-use Illuminate\Http\Request;
+use App\Data\Blog\CreateCategoryData;
+use App\Data\Blog\UpdateCategoryData;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Post\StoreCategoryRequest;
+use App\Http\Requests\Post\UpdateCategoryRequest;
+use App\Http\Resources\CategoryResource;
 use App\Models\Post\Category;
 use App\Services\CategoryService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Log;
-use App\Http\Controllers\Controller;
-use App\Data\Blog\CreateCategoryData;
-use App\Data\Blog\UpdateCategoryData;
-use App\Http\Resources\CategoryResource;
-use App\Http\Requests\Post\StoreCategoryRequest;
-use App\Http\Requests\Post\UpdateCategoryRequest;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class CategoryController extends Controller
 {

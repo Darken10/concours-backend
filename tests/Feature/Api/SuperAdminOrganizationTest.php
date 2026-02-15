@@ -117,7 +117,7 @@ describe('Super Admin Organization Management', function () {
     test('organization admin cannot create agent in different organization', function () {
         $organization1 = Organization::factory()->create();
         $organization2 = Organization::factory()->create();
-        
+
         $admin = User::factory()->create(['organization_id' => $organization1->id]);
         $admin->assignRole('admin');
 
