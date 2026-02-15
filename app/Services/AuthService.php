@@ -132,6 +132,13 @@ class AuthService
 
         $user = Auth::user();
 
+        // Check if email is verified
+        if ($user->email_verified_at === null) {
+            throw ValidationException::withMessages([
+                'email' => ['Veuillez vérifier votre adresse email avant de vous connecter'],
+            ]);
+        }
+
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return [

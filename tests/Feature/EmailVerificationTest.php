@@ -193,3 +193,19 @@ test('verification requires code with 6 digits', function () {
     $response->assertStatus(422)
         ->assertJsonValidationErrors(['code']);
 });
+
+test('user cannot login without email verification', function () {
+    $user = User::factory()->create([
+        'email' => 'unverified@example.com',
+        'password' => bcrypt('password'),
+        'email_verified_at' => null,
+    ]);
+
+    $response = $this->postJson('/api/auth/login', [
+        'email' => 'unverified@example.com',
+        'password' => 'password',
+    ]);
+
+    $response->assertStatus(422)
+        ->assertJsonValidationErrors(['email']);
+});
