@@ -13,7 +13,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 class Post extends Model implements HasMedia
 {
     /** @use HasFactory<\Database\Factories\Post\PostFactory> */
-    use HasFactory, HasUuids, InteractsWithMedia, Auditable;
+    use Auditable, HasFactory, HasUuids, InteractsWithMedia;
 
     protected $keyType = 'string';
 
@@ -36,15 +36,18 @@ class Post extends Model implements HasMedia
         'shares_count',
     ];
 
-    public function getLikesCountAttribute()    {
+    public function getLikesCountAttribute()
+    {
         return $this->likes()->count();
     }
 
-    public function getCommentsCountAttribute()    {
+    public function getCommentsCountAttribute()
+    {
         return $this->comments()->count();
     }
 
-    public function getSharesCountAttribute()    {
+    public function getSharesCountAttribute()
+    {
         return 0; // Placeholder for shares count, implement as needed
     }
 

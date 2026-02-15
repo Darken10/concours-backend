@@ -32,7 +32,7 @@ class Audit extends Model
 
     public function getAuditedModel(): ?Model
     {
-        if (!class_exists($this->model_type)) {
+        if (! class_exists($this->model_type)) {
             return null;
         }
 
