@@ -18,7 +18,6 @@ class UserResource extends JsonResource
     {
 
         return [
-
             'id' => $this->id,
             'email' => $this->email,
             'firstname' => $this->firstname,
@@ -32,6 +31,10 @@ class UserResource extends JsonResource
 
             'roles' => $this->getRoleNames(),
             // 'permissions' => $this->getAllPermissions()->pluck('name'),
+
+            // Email verification fields
+            'email_verified_at' => $this->email_verified_at?->toISOString(),
+            'email_verified' => $this->email_verified_at !== null,
 
             'created_at' => $this->created_at?->toISOString(),
         ];
